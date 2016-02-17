@@ -60,7 +60,7 @@ senza create pemetaan.yaml 1 \
     ApplicationID=pemetaan \
     ZookeeperConnectionString=zookeeper.example.com:2181 \
     HostedZone=example.com \
-    TeamCheckAPI=https://teams.example.com \
+    TeamCheckAPI=https://teams.example.com/api/teams/ \
     TeamCheckID=123456789 \
     OAuthAPIEndpoint=https://auth.example.com
 ```
