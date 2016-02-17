@@ -1,0 +1,27 @@
+{% extends "pemetaan_base.html" %}
+{% import "bootstrap/fixes.html" as fixes %}
+{% import "bootstrap/utils.html" as util %}
+
+{% block content %}
+{{util.flashed_messages(dismissible=True)}}
+    <div class="container">
+      <h1>Message Templates</h1>
+      <p>
+        <a class="btn btn-info" role="button" href="{{url_for('.saiki_templates_edit')}}">Create New Template</a>
+        <!-- <a class="btn btn-info" role="button" href="{{url_for('.move_topics')}}">Move all topics</a> -->
+      </p>
+      <table class="table">
+        <tr>
+          <th>Name</th>
+          <th></th>
+        </tr>
+        {% for template in templates %}
+        <tr>
+          <td>{{ template }}</td>
+          <td><a href="{{url_for('.saiki_templates_edit')}}?template={{ template }}">Edit</a></td>
+          <td><a onclick="return confirm('Are you sure?')" href="{{url_for('.saiki_templates_delete')}}?template={{ template }}"><span class="glyphicon glyphicon-remove red" aria-hidden="true"></a></td>
+        </tr>
+        {% endfor %}
+      </table>
+    </div>
+{% endblock %}

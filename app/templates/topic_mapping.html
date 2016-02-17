@@ -1,0 +1,29 @@
+{% extends "pemetaan_base.html" %}
+
+{% import "bootstrap/wtf.html" as wtf %}
+{% import "bootstrap/fixes.html" as fixes %}
+{% import "bootstrap/utils.html" as util %}
+
+{% block content %}
+{{util.flashed_messages(dismissible=True)}}
+    <div class="container">
+      <h1>Topic Mapping</h1>
+      <p><a class="btn btn-info" role="button" href="{{url_for('.create_topic_mapping')}}">Create New Topic Mapping</a></p>
+      <table class="table">
+        <tr><th>Content-Type</th><th>Topics</th><th>Active</th><th>Delete?</th></tr>
+        {% for ct in mappings %}
+          {% for topic in ct['topics'] %}
+            <tr><td>{{ ct['c_name'] }} {% if topic['error'] == 'true' %}<span class="inline_error">(Broken Mapping!)</span>{% endif %}</td> <td>{{ topic['name'] }}</td> <td>
+            {% if topic['data']['active'] == True %}
+              <span class="glyphicon glyphicon-ok green" aria-hidden="true"></span>
+            {% else %}
+              <span class="glyphicon glyphicon-minus grey" aria-hidden="true"></span>
+            {% endif %}
+            </td>
+          <td><a onclick="return confirm('Are you sure?')" href="{{url_for('.delete_topic_mapping')}}?ct={{ ct['c_name_enc'] }}&topic={{ topic['name'] }}"><span class="glyphicon glyphicon-remove red" aria-hidden="true"></a></td>
+        </tr>
+          {% endfor %}
+        {% endfor %}
+      </table>
+    </div>
+{% endblock %}

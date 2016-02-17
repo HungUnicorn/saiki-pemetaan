@@ -1,0 +1,30 @@
+{% extends "pemetaan_base.html" %}
+{% import "bootstrap/fixes.html" as fixes %}
+{% import "bootstrap/utils.html" as util %}
+
+{% block content %}
+{{util.flashed_messages(dismissible=True)}}
+    <div class="container">
+      <h1>Kafka Brokers</h1>
+      <table class="table">
+        <tr>
+          <th>ID</th>
+          <th>Host</th>
+          <th>Port</th>
+          <th>Version</th>
+          <th>Timestamp</th>
+          <th>Messages In / Sec (Avg last min)</th>
+        </tr>
+        {% for broker in brokers %}
+        <tr>
+          <td>{{ broker['id'] }}</td>
+          <td>{{ broker['host'] }}</td>
+          <td>{{ broker['port'] }}</td>
+          <td>{{ broker['version'] }}</td>
+          <td>{{ broker['timestamp_format'] }}</td>
+          <td>{{ broker['metrics']['MessagesPerSecOneMinuteRate'] }}</td>
+        </tr>
+        {% endfor %}
+      </table>
+    </div>
+{% endblock %}

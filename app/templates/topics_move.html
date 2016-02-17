@@ -1,0 +1,18 @@
+{% extends "pemetaan_base.html" %}
+{% import "bootstrap/fixes.html" as fixes %}
+{% import "bootstrap/utils.html" as util %}
+
+{% block content %}
+{{util.flashed_messages(dismissible=True)}}
+    <div class="container">
+      <h1>Move All Topics</h1>
+      <p>To which Broker should the topics be moved?</p>
+      <form method="POST" action="/topics/move">
+      {{ form.brokers_select_fields }}
+      <input type="submit" value="Go">
+    
+</form>
+      
+
+  </div>
+{% endblock %}

@@ -1,0 +1,35 @@
+{% extends "pemetaan_base.html" %}
+
+{% import "bootstrap/wtf.html" as wtf %}
+{% import "bootstrap/fixes.html" as fixes %}
+{% import "bootstrap/utils.html" as util %}
+
+
+{% block content %}
+{{util.flashed_messages(dismissible=True)}}
+    <div class="container">
+      <h1>Edit Topic Config: {{ form.topic.data }}</h1>
+      <form method="POST" action="/topics/config">
+    {{ form.hidden_tag() }}
+    <table>
+        <tr><td>retention.ms</td><td>{{ form.retention_ms(size=20) }}</td></tr>
+        <tr><td>max.message.bytes</td><td>{{ form.max_message_bytes(size=20) }}</td></tr>
+        <tr><td>cleanup.policy</td><td>{{ form.cleanup_policy(size=1) }}</td></tr>
+        <tr><td>flush.messages</td><td>{{ form.flush_messages(size=20) }}</td></tr>
+        <tr><td>flush.ms</td><td>{{ form.flush_ms(size=20) }}</td></tr>
+        <tr><td>index.interval.bytes</td><td>{{ form.index_interval_bytes(size=20) }}</td></tr>
+        <tr><td>min.cleanable.dirty.ratio</td><td>{{ form.min_cleanable_dirty_ratio(size=20) }}</td></tr>
+        <tr><td>min.insync.replicas</td><td>{{ form.min_insync_replicas(size=20) }}</td></tr>
+        <tr><td>retention.bytes</td><td>{{ form.retention_bytes(size=20) }}</td></tr>
+        <tr><td>segment.index.bytes</td><td>{{ form.segment_index_bytes(size=20) }}</td></tr>
+        <tr><td>segment.ms</td><td>{{ form.segment_ms(size=20) }}</td></tr>
+        <tr><td>segment.bytes</td><td>{{ form.segment_bytes(size=20) }}</td></tr>
+        <tr><td>segment.jitter.ms</td><td>{{ form.segment_jitter_ms(size=20) }}</td></tr>
+        <tr><td> </td><td><input type="submit" value="Go"></td></tr>
+      </table>
+    
+</form>
+      
+
+  </div>
+{% endblock %}

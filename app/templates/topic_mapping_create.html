@@ -1,0 +1,25 @@
+{% extends "pemetaan_base.html" %}
+
+{% import "bootstrap/wtf.html" as wtf %}
+{% import "bootstrap/fixes.html" as fixes %}
+{% import "bootstrap/utils.html" as util %}
+
+
+{% block content %}
+{{util.flashed_messages(dismissible=True)}}
+    <div class="container">
+      <h1>Create New Topic Mapping</h1>
+      <form method="POST" action="/topic_mapping/create">
+    {{ form.hidden_tag() }}
+    <table>
+        <tr><td>{{ form.content_type.label }} </td><td>{{ form.content_type(size=20) }}</td></tr>
+         <tr><td>{{ form.topic.label }} </td><td>{{ form.topic(size=20) }}</td></tr>
+          <tr><td>{{ form.active.label }} </td><td>{{ form.active(size=20) }}</td></tr>
+          <tr><td> </td><td><input type="submit" value="Go"></td></tr>
+      </table>
+    
+</form>
+      
+
+  </div>
+{% endblock %}

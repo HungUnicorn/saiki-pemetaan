@@ -1,0 +1,40 @@
+.alert-dismissible .close {
+    right: 0px; 
+}
+
+.inline_error {
+    color: red;
+    text-transform: uppercase;
+    font-weight: bold;
+}
+
+.green {
+    color: #78B924;
+}
+
+.red {
+    color: #dd3010;
+}
+
+form table td {
+    padding: 5px !important;
+}
+
+.alert-danger {
+    color: #73000D !important;
+}
+
+.navbar-header {
+    width: 100%;
+}
+
+.ui-tooltip {
+    font-family: "Source Sans Pro",sans-serif;
+    font-size: 15px;
+    max-width: none !important;
+}
+
+.ui-tooltip td {
+    border: 1px solid #D1D1D1;
+    padding: 3px;
+}

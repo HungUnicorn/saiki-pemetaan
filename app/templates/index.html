@@ -1,0 +1,20 @@
+{% extends "pemetaan_base.html" %}
+
+{% import "bootstrap/wtf.html" as wtf %}
+{% import "bootstrap/fixes.html" as fixes %}
+{% import "bootstrap/utils.html" as util %}
+
+{% block content %}
+{{util.flashed_messages(dismissible=True)}}
+    <div class="container">
+      <h1>Pemetaan</h1>
+      <p>Control Center for all Saiki related maintenance tasks.</p>
+      {% if access_token %}
+      <p>Click one of the Menu Links in the Navigation Bar to access Pemetaan's functions.</p>
+      <h3>Token Info</h3>
+      <pre>{{ access_token|to_json }}</pre>
+      {% else %}
+      <p>please login to use all functions!</p>
+      {% endif %}
+  </div>
+{% endblock %}

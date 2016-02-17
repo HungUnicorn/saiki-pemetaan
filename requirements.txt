@@ -1,0 +1,7 @@
+Flask-OAuthlib==0.9.1
+kazoo==2.2.1
+Flask==0.10.1
+Flask-WTF==0.12
+flask_bootstrap==3.3.5.7
+flask_appconfig==0.11.1
+uwsgi==2.0.11.2
