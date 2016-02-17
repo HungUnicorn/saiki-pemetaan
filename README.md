@@ -12,7 +12,13 @@ Therefore we wrote Pemetaan (javanese for "Mapping"). Pemetaan is a Python3 Flas
 
 ## Functions
 
-tbc
+Broker Monitoring:
+
+![broker](/img/broker_overview.png)
+
+Topic Management:
+
+![broker](/img/topic_overview.png)
 
 ## Deployment
 
