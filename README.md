@@ -45,3 +45,21 @@ docker run \
   <PEMETAAN_IMAGE_ID>
 ```
 
+## Deployment with STUPS
+
+We build Pemetaan specifically for the STUPS Toolbox. You can find a example Senza Definition Yaml File in the repository. This could be an example start (Its highly likely that you will need to adapt the yaml or the start command!):
+```
+senza create pemetaan.yaml 1 \
+    DockerBaseImage=pierone.example.com/team/pemetaan \
+    DockerVersion=1.0 \
+    MintBucket=s3-mint-bucket-eu-west-1 \
+    ScalyrAccountKey=super_secret_key_1 \
+    LogentriesAccountKey=super_secret_key_2 \
+    ApplicationID=pemetaan \
+    ZookeeperConnectionString=zookeeper.example.com:2181 \
+    HostedZone=example.com \
+    TeamCheckAPI=https://teams.example.com \
+    TeamCheckID=123456789 \
+    OAuthAPIEndpoint=https://auth.example.com
+```
+

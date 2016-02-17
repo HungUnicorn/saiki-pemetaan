@@ -1,0 +1,152 @@
+Description: "Saiki Control Cockpit"
+SenzaInfo:
+  StackName: pemetaan
+  Parameters:
+    - DockerBaseImage:
+        Description: "Docker base path without version tag of pemetaan."
+    - DockerVersion:
+        Description: "Docker Version tag of pemetaan to use."
+    - MintBucket:
+        Description: "Mint Bucket of pemetaan."
+    - ScalyrAccountKey:
+        Description: "Scalyr Account Key, necessary for Logging."
+        Default: ""
+    - LogentriesAccountKey:
+        Description: "Logentries Account Key, necessary for Logging."
+        Default: ""
+    - ApplicationID:
+        Description: "The Application Id which got registered for pemetaan in Yourturn/Kio."
+    - ZookeeperConnectionString:
+        Description: "Which ZooKeeper Stack should be used?"
+    - HostedZone:
+        Description: "The generic Hosted Zone for your AWS account"
+    - TeamCheckAPI:
+        Description: "The Teams Api Endpoint"
+        Default: ""
+    - TeamCheckID:
+        Description: "The ID of the Team every user should be in"
+        Default: ""
+    - OAuthAPIEndpoint:
+        Description: "The Oauth Endpoint which provides Oauth Tokens"
+SenzaComponents:
+  - Configuration:
+      Type: Senza::StupsAutoConfiguration
+  - AppServer:
+      Type: Senza::TaupageAutoScalingGroup
+      AutoScaling:
+        Minimum: 2
+        Maximum: 2
+        MetricType: CPU
+      HealthCheckType: ELB
+      ElasticLoadBalancer: AppLoadBalancer
+      LoadBalancerNames:
+        - Ref: AppLoadBalancer
+      InstanceType: t2.nano
+      SecurityGroups:
+        - "Fn::GetAtt" : [ "PemetaanSecGroup" , "GroupId" ]
+      IamRoles:
+        - Ref: PemetaanRole
+      TaupageConfig:
+        application_id: "{{Arguments.ApplicationID}}"
+        runtime: Docker
+        source: "{{Arguments.DockerBaseImage}}:{{Arguments.DockerVersion}}"
+        ports:
+          80: 80
+        root: true
+        mint_bucket: '{{Arguments.MintBucket}}'
+        scalyr_account_key: '{{Arguments.ScalyrAccountKey}}'
+        logentries_account_key: '{{Arguments.LogentriesAccountKey}}'
+        enhanced_cloudwatch_metrics: true
+        environment:
+          ENABLE_OAUTH: "false"
+          ZOOKEEPER_CONN_STRING: "{{Arguments.ZookeeperConnectionString}}"
+          SCALYR_ACCOUNT_KEY: '{{Arguments.ScalyrAccountKey}}'
+          APP_URL: "https://{{SenzaInfo.StackName}}.{{Arguments.HostedZone}}"
+          APP_SECRET_KEY: "super_secret_key-which.no,one;will1ever4find?out"
+          OAUTH_API_ENDPOINT: "{{Arguments.OAuthAPIEndpoint}}"
+          TEAMCHECK_API: "{{Arguments.TeamCheckAPI}}"
+          TEAMCHECK_ID: "{{Arguments.TeamCheckID}}"
+  - AppLoadBalancer:
+    Type: Senza::WeightedDnsElasticLoadBalancer
+    HTTPPort: 80
+    HealthCheck:
+      Target: HTTP:80/health
+      Timeout: 5
+      Interval: 30
+      UnhealthyThreshold: 2
+      HealthyThreshold: 2
+    SecurityGroups:
+      - "Fn::GetAtt" : [ "PemetaanLBSecGroup" , "GroupId" ]
+    ConnectionSettings:
+      IdleTimeout: 3600
+    Scheme: internet-facing
+Resources:
+  PemetaanRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+        - Effect: Allow
+          Principal:
+            Service: ec2.amazonaws.com
+          Action: sts:AssumeRole
+      Path: /
+      Policies:
+      - PolicyName: AmazonS3MintBucketAccess
+        PolicyDocument:
+          Version: "2012-10-17"
+          Statement:
+          - Effect: Allow
+            Action: "s3:GetObject"
+            Resource: ["arn:aws:s3:::{{Arguments.MintBucket}}/{{Arguments.ApplicationID}}/*"]
+  PemetaanSecGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: "Pemetaan Appliance Security Group"
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+          CidrIp: "0.0.0.0/0"
+        - IpProtocol: tcp
+          FromPort: 22
+          ToPort: 22
+          CidrIp: "0.0.0.0/0"
+        - IpProtocol: tcp
+          FromPort: 9100
+          ToPort: 9100
+          CidrIp: "0.0.0.0/0"
+  PemetaanLBSecGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: "Pemetaan LB Appliance Security Group"
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 443
+          ToPort: 443
+          CidrIp: "0.0.0.0/0"
+  Route53WeightedDomainRecord:
+    Type: AWS::Route53::RecordSet
+    Properties:
+      HostedZoneName: "{{Arguments.HostedZone}}."
+      Name: "{{SenzaInfo.StackName}}.{{Arguments.HostedZone}}"
+      SetIdentifier: "{{SenzaInfo.StackName}}-{{Arguments.version}}"
+      Type: CNAME
+      TTL: 20
+      Weight: 0
+      ResourceRecords:
+        - Fn::GetAtt:
+           - AppLoadBalancer
+           - DNSName
+  Route53VersionedDomainRecord:
+    Type: AWS::Route53::RecordSet
+    Properties:
+      HostedZoneName: "{{Arguments.HostedZone}}."
+      Name: "{{SenzaInfo.StackName}}-{{Arguments.version}}.{{Arguments.HostedZone}}"
+      Type: CNAME
+      TTL: 20
+      ResourceRecords:
+        - Fn::GetAtt:
+           - AppLoadBalancer
+           - DNSName
