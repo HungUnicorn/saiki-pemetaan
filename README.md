@@ -8,7 +8,9 @@ We at [Zalando](https://tech.zalando.com) needed a central interface for working
 - creating additional Data in Zookeeper to make it available to other components
 - Secure everything with Oauth2
 
-Therefore we wrote Pemetaan (javanese for "Mapping"). Pemetaan is a Python3 Flask Application, wrapped in a WSGI container run by uWSGI. All Web Requests are managed by Nginx. The whole System is secured
+Therefore we wrote Pemetaan (javanese for "Mapping"). Pemetaan is a Python3 Flask Application, wrapped in a WSGI container run by uWSGI. All Web Requests are managed by Nginx. 
+
+We suggest highly to run Pemetaan with the newest version of [Saiki-Buku](https://github.com/zalando/saiki-buku).
 
 ## Functions
 
