@@ -32,7 +32,7 @@ docker run \
   -e TEAMCHECK_API=https://teams.example.com/api/teams/ \
   -e TEAMCHECK_ID=123345678 \
   -e ZOOKEEPER_CONN_STRING=zookeeper.example.com:2181 \
-  -e APP_URL=https://192.168.99.100/ \
+  -e APP_URL=https://pemetaan.example.com/ \
   -v $CREDENTIALS_DIR:/meta/credentials \
   -e CREDENTIALS_DIR=/meta/credentials \
   --name pemetaan \
