@@ -63,7 +63,7 @@ SenzaComponents:
           SCALYR_ACCOUNT_KEY: '{{Arguments.ScalyrAccountKey}}'
           APP_URL: "https://{{SenzaInfo.StackName}}.{{Arguments.HostedZone}}"
           APP_SECRET_KEY: "super_secret_key-which.no,one;will1ever4find?out"
-          OAUTH_API_ENDPOINT: "{{Arguments.OAuthAPIEndpoint}}"
+          ACCESS_TOKEN_URL: "{{Arguments.OAuthAPIEndpoint}}"
           TEAMCHECK_API: "{{Arguments.TeamCheckAPI}}"
           TEAMCHECK_ID: "{{Arguments.TeamCheckID}}"
   - AppLoadBalancer:
