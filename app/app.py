@@ -42,7 +42,8 @@ with open(os.path.join(os.getenv('CREDENTIALS_DIR',
                                  ''), 'client.json')) as fd:
         client_credentials = json.load(fd)
 
-oauth_api_endpoint = os.getenv('OAUTH_API_ENDPOINT', '')
+oauth_api_endpoint = os.getenv('ACCESS_TOKEN_URL', '')
+oauth_tokeninfo_endpoint = os.getenv('TOKENINFO_URL', '')
 
 if oauth_api_endpoint == '':
     logging.error("no OAuth Endpoint provided. Exiting ...")
@@ -459,9 +460,8 @@ def validate_access_token():
     """Docstring."""
     global app_props
     if 'auth_token' in session:
-        token_url = oauth_api_endpoint + "/oauth2/tokeninfo"
         response = requests.get("%s?access_token=%s" % (
-                                token_url,
+                                oauth_tokeninfo_endpoint,
                                 session['auth_token'][0]), verify=False)
         response.close()
         resp_json = response.json()
