@@ -49,7 +49,7 @@ docker run \
 
 ## Deployment with STUPS
 
-We build Pemetaan specifically for the STUPS Toolbox. You can find a example Senza Definition Yaml File in the repository. This could be an example start (Its highly likely that you will need to adapt the yaml or the start command!):
+We build Pemetaan specifically for the [STUPS Toolbox](https://stups.io/). You can find a example Senza Definition Yaml File in the repository. This could be an example start (Its highly likely that you will need to adapt the yaml or the start command!):
 ```
 senza create pemetaan.yaml 1 \
     DockerBaseImage=pierone.example.com/team/pemetaan \
@@ -60,7 +60,7 @@ senza create pemetaan.yaml 1 \
     ApplicationID=pemetaan \
     ZookeeperConnectionString=zookeeper.example.com:2181 \
     HostedZone=example.com \
-    TeamCheckAPI=https://teams.example.com \
+    TeamCheckAPI=https://teams.example.com/api/teams/ \
     TeamCheckID=123456789 \
     OAuthAPIEndpoint=https://auth.example.com
 ```

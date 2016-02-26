@@ -67,19 +67,19 @@ SenzaComponents:
           TEAMCHECK_API: "{{Arguments.TeamCheckAPI}}"
           TEAMCHECK_ID: "{{Arguments.TeamCheckID}}"
   - AppLoadBalancer:
-    Type: Senza::WeightedDnsElasticLoadBalancer
-    HTTPPort: 80
-    HealthCheck:
-      Target: HTTP:80/health
-      Timeout: 5
-      Interval: 30
-      UnhealthyThreshold: 2
-      HealthyThreshold: 2
-    SecurityGroups:
-      - "Fn::GetAtt" : [ "PemetaanLBSecGroup" , "GroupId" ]
-    ConnectionSettings:
-      IdleTimeout: 3600
-    Scheme: internet-facing
+      Type: Senza::WeightedDnsElasticLoadBalancer
+      HTTPPort: 80
+      HealthCheck:
+        Target: HTTP:80/health
+        Timeout: 5
+        Interval: 30
+        UnhealthyThreshold: 2
+        HealthyThreshold: 2
+      SecurityGroups:
+        - "Fn::GetAtt" : [ "PemetaanLBSecGroup" , "GroupId" ]
+      ConnectionSettings:
+        IdleTimeout: 3600
+      Scheme: internet-facing
 Resources:
   PemetaanRole:
     Type: AWS::IAM::Role
