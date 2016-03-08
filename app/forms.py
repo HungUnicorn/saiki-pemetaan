@@ -28,7 +28,7 @@ class ConfigForm(Form):
     topic = HiddenField("Topic")
     retention_ms = IntegerField('retention_ms')
     max_message_bytes = IntegerField('max_message_bytes')
-    options_cleanup_policy = ['default', 'compact']
+    options_cleanup_policy = ['delete', 'compact']
     cleanup_policy = SelectField('cleanup_policy',
                                  choices=[(f, f) for f in
                                           options_cleanup_policy])
