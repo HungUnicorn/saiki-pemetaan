@@ -1,0 +1,8 @@
+language: python
+python:
+  - "3.5"
+# command to install dependencies
+#install: "pip install -r irequirements.txt"
+# command to run tests
+install: "pip install flake8"
+script: flake8
