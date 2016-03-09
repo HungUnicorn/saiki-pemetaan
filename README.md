@@ -1,3 +1,4 @@
+[![Build Status](https://travis-ci.org/zalando/saiki-pemetaan.svg?branch=master)](https://travis-ci.org/zalando/saiki-pemetaan)
 # Pemetaan
 
 We at [Zalando](https://tech.zalando.com) needed a central interface for working with all things related to the Saiki Project. That included:
