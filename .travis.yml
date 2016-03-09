@@ -5,4 +5,4 @@ python:
 #install: "pip install -r irequirements.txt"
 # command to run tests
 install: "pip install flake8"
-script: flake8
+script: "flake8 ."
