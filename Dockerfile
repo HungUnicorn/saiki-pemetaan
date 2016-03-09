@@ -21,7 +21,6 @@ RUN apt-get install -y ca-certificates nginx && \
 RUN ln -sf /dev/stdout /var/log/nginx/access.log
 RUN ln -sf /dev/stderr /var/log/nginx/error.log
 
-COPY scm-source.json /scm-source.json
 COPY pemetaan_nginx.conf /etc/nginx/sites-enabled/pemetaan_nginx.conf
 COPY nginx.conf /etc/nginx/nginx.conf
 
@@ -36,6 +35,8 @@ COPY app /opt/pemetaan
 
 RUN wget -O /opt/pemetaan/rebalance_partitions.py https://raw.githubusercontent.com/zalando/saiki-buku/e2799ab3b21aace117a1fd5b9b784535a2d2ba30/rebalance_partitions.py
 RUN wget -O /opt/pemetaan/static/jquery.validate-json.js https://raw.githubusercontent.com/dustinboston/validate-json/master/jquery.validate-json.js
+
+COPY scm-source.json /scm-source.json
 
 WORKDIR /opt/pemetaan
 
