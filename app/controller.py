@@ -338,7 +338,6 @@ def get_mappings():
                                          "data": "false",
                                          "error": "true"})
         return_list.append(t_dict)
-
     return return_list
 
 
