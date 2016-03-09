@@ -3,8 +3,10 @@
 {% import "bootstrap/utils.html" as util %}
 
 {% block scripts %}
-    <script src="//code.jquery.com/jquery-1.10.2.js"></script>
-    <script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+    <script type="text/javascript" src="//code.jquery.com/jquery-1.10.2.js"></script>
+    <script type="text/javascript" src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/1.10.11/js/jquery.dataTables.min.js"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/1.10.11/js/dataTables.bootstrap.min.js"></script>
     <script>
     $(function() {
       $( document ).tooltip({
@@ -14,11 +16,27 @@
       });
     });
     </script>
+    <script>
+    $(document).ready(function() {
+      $('#topic_table').DataTable({
+        "columns": [
+        null,
+        null,
+        null,
+        null,
+        null,
+        { "orderable": false },
+        { "orderable": false },
+      ]
+      });
+    } );
+    </script>
 {% endblock %}
 
 {% block styles %}
 {{super()}}
-    <link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css" />
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.11/css/dataTables.bootstrap.min.css" />
 {% endblock %}
 
 {% block content %}
@@ -32,27 +50,32 @@
       <p>
         Hover over the Partition Count to see details about the partition distribution.
       </p>
-      <table class="table">
-        <tr>
-          <th>Topics</th>
-          <th>Delete?</th>
-          <th>Partitions</th>
-          <th>MsgInPerSec (Avg 1min)</th>
-          <th>BytesInPerSec (Avg 1min)</th>
-          <th>Config</th>
-          <th>Delete?</th>
-        </tr>
-        {% for topic in topics %}
-        <tr>
-          <td>{{ topic['topic_name'] }}</td>
-          <td>{{ topic['delete'] }}</td>
-          <td title="Partition Distribution:<br>{{ topic['partitions_pretty'] }}"><span class="partition_span">{{ topic['partitions']|length }}</span></td>
-          <td>{{ topic['metrics']['MessagesPerSecOneMinuteRate'] }}</td>
-          <td>{{ topic['metrics']['BytesPerSecOneMinuteRate'] }}</td>
-          <td><a class="" href="{{url_for('.topics_config')}}?topic={{ topic['topic_name'] }}">Edit</a></td>
-          <td><a onclick="return confirm('Are you sure?')" href="{{url_for('.delete_topic')}}?topic={{ topic['topic_name'] }}"><span class="glyphicon glyphicon-remove red" aria-hidden="true"></a></td>
-        </tr>
-        {% endfor %}
+      <table id="topic_table" class="table">
+        <thead>
+          <tr>
+            <th>Topics</th>
+            <th>Delete?</th>
+            <th>Partitions</th>
+            <th>MsgInPerSec (Avg 1min)</th>
+            <th>BytesInPerSec (Avg 1min)</th>
+            <th>Config</th>
+            <th>Delete?</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for topic in topics %}
+          <tr>
+            <td>{{ topic['topic_name'] }}</td>
+            <td>{{ topic['delete'] }}</td>
+            <td title="Partition Distribution:<br>{{ topic['partitions_pretty'] }}"><span class="partition_span">{{ topic['partitions']|length }}</span></td>
+            <td>{{ topic['metrics']['MessagesPerSecOneMinuteRate'] }}</td>
+            <td>{{ topic['metrics']['BytesPerSecOneMinuteRate'] }}</td>
+            <td><a class="" href="{{url_for('.topics_config')}}?topic={{ topic['topic_name'] }}">Edit</a></td>
+            <td><a onclick="return confirm('Are you sure?')" href="{{url_for('.delete_topic')}}?topic={{ topic['topic_name'] }}"><span class="glyphicon glyphicon-remove red" aria-hidden="true"></a></td>
+          </tr>
+          {% endfor %}
+        </tbody>
       </table>
     </div>
+
 {% endblock %}

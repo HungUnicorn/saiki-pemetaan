@@ -2,6 +2,28 @@
 {% import "bootstrap/fixes.html" as fixes %}
 {% import "bootstrap/utils.html" as util %}
 
+{% block scripts %}
+    <script type="text/javascript" src="//code.jquery.com/jquery-1.10.2.js"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/1.10.11/js/jquery.dataTables.min.js"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/1.10.11/js/dataTables.bootstrap.min.js"></script>
+    <script>
+    $(document).ready(function() {
+      $('#template_table').DataTable({
+        "columns": [
+        null,
+        { "orderable": false },
+        { "orderable": false },
+      ]
+      });
+    } );
+    </script>
+{% endblock %}
+
+{% block styles %}
+{{super()}}
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.11/css/dataTables.bootstrap.min.css" />
+{% endblock %}
+
 {% block content %}
 {{util.flashed_messages(dismissible=True)}}
     <div class="container">
@@ -10,11 +32,15 @@
         <a class="btn btn-info" role="button" href="{{url_for('.saiki_templates_edit')}}">Create New Template</a>
         <!-- <a class="btn btn-info" role="button" href="{{url_for('.move_topics')}}">Move all topics</a> -->
       </p>
-      <table class="table">
+      <table id="template_table" class="table">
+      <thead>
         <tr>
           <th>Name</th>
           <th></th>
+          <th>Delete?</th>
         </tr>
+      </thead>
+      <tbody>
         {% for template in templates %}
         <tr>
           <td>{{ template }}</td>
@@ -22,6 +48,7 @@
           <td><a onclick="return confirm('Are you sure?')" href="{{url_for('.saiki_templates_delete')}}?template={{ template }}"><span class="glyphicon glyphicon-remove red" aria-hidden="true"></a></td>
         </tr>
         {% endfor %}
+        </tbody>
       </table>
     </div>
 {% endblock %}

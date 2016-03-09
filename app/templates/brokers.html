@@ -2,29 +2,49 @@
 {% import "bootstrap/fixes.html" as fixes %}
 {% import "bootstrap/utils.html" as util %}
 
+{% block scripts %}
+    <script type="text/javascript" src="//code.jquery.com/jquery-1.10.2.js"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/1.10.11/js/jquery.dataTables.min.js"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/1.10.11/js/dataTables.bootstrap.min.js"></script>
+    <script>
+    $(document).ready(function() {
+      $('#broker_table').DataTable();
+    } );
+    </script>
+{% endblock %}
+
+{% block styles %}
+{{super()}}
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.11/css/dataTables.bootstrap.min.css" />
+{% endblock %}
+
 {% block content %}
 {{util.flashed_messages(dismissible=True)}}
     <div class="container">
       <h1>Kafka Brokers</h1>
-      <table class="table">
-        <tr>
-          <th>ID</th>
-          <th>Host</th>
-          <th>Port</th>
-          <th>Version</th>
-          <th>Timestamp</th>
-          <th>Messages In / Sec (Avg last min)</th>
-        </tr>
-        {% for broker in brokers %}
-        <tr>
-          <td>{{ broker['id'] }}</td>
-          <td>{{ broker['host'] }}</td>
-          <td>{{ broker['port'] }}</td>
-          <td>{{ broker['version'] }}</td>
-          <td>{{ broker['timestamp_format'] }}</td>
-          <td>{{ broker['metrics']['MessagesPerSecOneMinuteRate'] }}</td>
-        </tr>
-        {% endfor %}
+      <table id="broker_table" class="table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Host</th>
+            <th>Port</th>
+            <th>Version</th>
+            <th>Timestamp</th>
+            <th>Messages In / Sec (Avg last min)</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for broker in brokers %}
+          <tr>
+            <td>{{ broker['id'] }}</td>
+            <td>{{ broker['host'] }}</td>
+            <td>{{ broker['port'] }}</td>
+            <td>{{ broker['version'] }}</td>
+            <td>{{ broker['timestamp_format'] }}</td>
+            <td>{{ broker['metrics']['MessagesPerSecOneMinuteRate'] }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
       </table>
     </div>
 {% endblock %}

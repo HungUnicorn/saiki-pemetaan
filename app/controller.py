@@ -338,6 +338,11 @@ def get_mappings():
                                          "data": "false",
                                          "error": "true"})
         return_list.append(t_dict)
+
+    # return_list.sort(key=lambda x: (x['c_name']))
+    # for ct in return_list:
+    #     if 'topics' in ct:
+    #         ct['topics'].sort(key=lambda y: (y['name']))
     return return_list
 
 
