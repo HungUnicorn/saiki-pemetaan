@@ -1,0 +1,75 @@
+{% extends "pemetaan_base.html" %}
+{% import "bootstrap/fixes.html" as fixes %}
+{% import "bootstrap/utils.html" as util %}
+
+{% block scripts %}
+  {% from 'macros.html' import button_js %}
+  {{ button_js() }}
+{% endblock %}
+
+{% block content %}
+
+{% from 'macros.html' import active_button, inactive_button %}
+
+{{util.flashed_messages(dismissible=True)}}
+    <div class="container">
+      <h1>Pemetaan Settings</h1>
+      <table class="table">
+        <tr>
+          <td>Show Broker Information?</td>
+          <td>
+            {% if settings['show_brokers'] == True %}
+              <a href="{{url_for('.pemetaan_settings')}}?setting=show_brokers&value=false">
+                {{ active_button() }}
+              </a>
+            {% else %}
+              <a href="{{url_for('.pemetaan_settings')}}?setting=show_brokers&value=true">
+                {{ inactive_button() }}
+              </a>
+            {% endif %}
+          </td>
+        </tr>
+        <tr>
+          <td>Show Topic Information?</td>
+          <td>
+            {% if settings['show_topics'] == True %}
+              <a href="{{url_for('.pemetaan_settings')}}?setting=show_topics&value=false">
+                {{ active_button() }}
+              </a>
+            {% else %}
+              <a href="{{url_for('.pemetaan_settings')}}?setting=show_topics&value=true">
+                {{ inactive_button() }}
+              </a>
+            {% endif %}
+          </td>
+        </tr>
+        <tr>
+          <td>Show Saiki Content-Type Mappings?</td>
+          <td>
+            {% if settings['show_mappings'] == True %}
+              <a href="{{url_for('.pemetaan_settings')}}?setting=show_mappings&value=false">
+                {{ active_button() }}
+              </a>
+            {% else %}
+              <a href="{{url_for('.pemetaan_settings')}}?setting=show_mappings&value=true">
+                {{ inactive_button() }}
+              </a>
+            {% endif %}
+          </td>
+        </tr>
+        <tr>
+          <td>Show Saiki Templates?</td>
+          <td>
+            {% if settings['show_templates'] == True %}
+              <a href="{{url_for('.pemetaan_settings')}}?setting=show_templates&value=false">
+                {{ active_button() }}
+              </a>
+            {% else %}
+              <a href="{{url_for('.pemetaan_settings')}}?setting=show_templates&value=true">
+                {{ inactive_button() }}
+              </a>
+            {% endif %}
+          </td>
+        </tr>
+    </div>
+{% endblock %}

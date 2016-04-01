@@ -1,0 +1,31 @@
+{% macro active_button() %}
+    <div class="switch_hover btn-group btn-toggle"> 
+        <div class="btn btn-xs btn-primary">ON</div>
+        <div class="btn btn-xs btn-default">OFF</div>
+    </div>
+{% endmacro %}
+
+{% macro inactive_button() %}
+    <div class="switch_hover btn-group btn-toggle"> 
+        <div class="btn btn-xs btn-default">ON</div>
+        <div class="btn btn-xs btn-primary">OFF</div>
+    </div>
+{% endmacro %}
+
+{% macro button_js() %}
+<script type="text/javascript" src="//code.jquery.com/jquery-2.2.1.min.js"></script>
+
+    <script>
+      $( document ).ready(
+        function(){
+          $('.switch_hover').hover(
+            function(){
+              $( this ).children().addClass('active');},
+            function(){
+              $( this ).children().removeClass('active');
+            }
+          );
+        }
+      );
+    </script>
+{% endmacro %}

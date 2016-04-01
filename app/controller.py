@@ -1,6 +1,7 @@
 # coding=utf-8
 """Controller File."""
-from zookeeper import init_zk, get_namespace_kafka, get_namespace_saiki
+from zookeeper import init_zk, get_namespace_kafka, get_namespace_saiki, \
+    get_namespace_pemetaan
 from kazoo.client import NoNodeError, NodeExistsError
 import json
 from rebalance_partitions import get_zk_dict, generate_json, \
@@ -10,8 +11,9 @@ import datetime
 import urllib
 import jmx
 
-namespace = get_namespace_kafka()
+namespace_kafka = get_namespace_kafka()
 namespace_saiki = get_namespace_saiki()
+namespace_pemetaan = get_namespace_pemetaan()
 
 
 def get_html_tooltip(t_dict):
@@ -81,7 +83,7 @@ def get_topics_deletion(zk):
 
 def get_topics():
     """Docstring."""
-    zk = init_zk(namespace)
+    zk = init_zk(namespace_kafka)
 
     return_list = []
 
@@ -121,7 +123,7 @@ def get_topics():
 
 def get_config(topic):
     """Docstring."""
-    zk = init_zk(namespace)
+    zk = init_zk(namespace_kafka)
     try:
         config_data, stat = zk.get('/config/topics/' + topic)
         config_dict = json.loads(config_data.decode("utf-8"))['config']
@@ -132,7 +134,7 @@ def get_config(topic):
 
 def update_config(cform):
     """Docstring."""
-    zk = init_zk(namespace)
+    zk = init_zk(namespace_kafka)
 
     topic = cform.topic.data
     config_dict = {'version': 1, 'config': {}}
@@ -191,7 +193,7 @@ def update_config(cform):
 
 def create_topic_entry(topic_name, partition_count, replication_factor):
     """Docstring."""
-    zk = init_zk(namespace)
+    zk = init_zk(namespace_kafka)
     zk_dict = get_zk_dict(zk)
     topics = {topic_name: {}}
     for i in range(0, int(partition_count)):
@@ -213,7 +215,7 @@ def create_topic_entry(topic_name, partition_count, replication_factor):
 
 def delete_topic_entry(topic_name):
     """Docstring."""
-    zk = init_zk(namespace)
+    zk = init_zk(namespace_kafka)
     zk.create('/admin/delete_topics/' + topic_name,
               makepath=True)
     logging.info("marked topic for deletion: " + topic_name)
@@ -221,7 +223,7 @@ def delete_topic_entry(topic_name):
 
 def validate_topic(topic):
     """Docstring."""
-    zk = init_zk(namespace)
+    zk = init_zk(namespace_kafka)
     if zk.exists('/brokers/topics/' + topic) is not None:
         return True
     else:
@@ -230,7 +232,7 @@ def validate_topic(topic):
 
 def reassign_all_topics(brokers):
     """Docstring."""
-    zk = init_zk(namespace)
+    zk = init_zk(namespace_kafka)
     zk_dict = get_zk_dict(zk)
     logging.info(zk_dict)
     logging.info(brokers)
@@ -251,7 +253,7 @@ def get_raw_brokers():
 
 def get_brokers():
     """Docstring."""
-    zk = init_zk(namespace)
+    zk = init_zk(namespace_kafka)
 
     return_list = []
 
@@ -434,3 +436,27 @@ def delete_template(template):
     """Docstring."""
     zk = init_zk(namespace_saiki)
     zk.delete('/templates/' + template)
+
+
+def get_settings():
+    """Get Pemetaan Settings from ZK."""
+    zk = init_zk(namespace_pemetaan)
+
+    try:
+        data, stat = zk.get('/settings')
+        return json.loads(data.decode('utf-8'))
+    except NoNodeError:
+        return []
+
+
+def update_settings(key_to_update, value_to_update):
+    """Set Pemetaan Settings in ZK."""
+    logging.info("setting new pemetaan settings ...")
+    settings = get_settings()
+    print(settings)
+    print(key_to_update)
+    print(value_to_update)
+    settings[key_to_update] = value_to_update
+    print(settings)
+    zk = init_zk(namespace_pemetaan)
+    zk.set('/settings', json.dumps(settings).encode('utf-8'))

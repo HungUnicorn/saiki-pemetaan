@@ -16,7 +16,7 @@ from controller import get_mappings, write_mapping, delete_mapping, \
     get_topics, create_topic_entry, get_config, update_config, \
     validate_topic, delete_topic_entry, reassign_all_topics, get_brokers, \
     get_saiki_templates, get_saiki_template_single, update_template, \
-    delete_template
+    delete_template, get_settings, update_settings
 
 logging.basicConfig(level=getattr(logging, 'INFO', None))
 logging.getLogger("requests").setLevel(logging.WARNING)
@@ -90,6 +90,7 @@ def check_and_render(template, force_render=False, **kwargs):
     if isloggedin:
         return render_template(template,
                                access_token=token_info,
+                               display_settings=get_settings(),
                                **kwargs)
     elif (force_render is True):
         return render_template(template)
@@ -482,6 +483,24 @@ def validate_access_token():
             return True, response.json()
     else:
         return False, None
+
+
+@app.route('/settings')
+def pemetaan_settings():
+    """Settings Overview Page."""
+    if only_check():
+        setting = request.args.get('setting')
+        value = request.args.get('value')
+        if setting is not None and value is not None:
+            from distutils.util import strtobool
+            update_settings(setting, strtobool(value))
+            return check_and_render('settings.html',
+                                    settings=get_settings())
+        else:
+            return check_and_render('settings.html',
+                                    settings=get_settings())
+    else:
+        return check_and_render('index.html')
 
 
 # @app.route('/metrics')
