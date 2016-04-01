@@ -47,3 +47,14 @@ form table td {
 table.dataTable thead .sorting:after, table.dataTable thead .sorting_asc:after, table.dataTable thead .sorting_desc:after, table.dataTable thead .sorting_asc_disabled:after, table.dataTable thead .sorting_desc_disabled:after {
     bottom: 5px !important;
 }
+
+.btn-primary:active:hover
+{
+    color: #ffffff;
+    background-color: #e86f11;
+    border-color: #bd5b0e;
+}
+
+.container .col-md-2 {
+    margin-top: 150px;
+}

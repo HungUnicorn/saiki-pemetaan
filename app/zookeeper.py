@@ -24,3 +24,7 @@ def get_namespace_kafka():
 
 def get_namespace_saiki():
     return os.getenv('ZOOKEEPER_NAMESPACE_SAIKI')
+
+
+def get_namespace_pemetaan():
+    return os.getenv('ZOOKEEPER_NAMESPACE_PEMETAAN')
