@@ -223,8 +223,9 @@ def delete_topic_entry(topic_name):
 
 def validate_topic(topic):
     """Docstring."""
+    number_of_whitespace = len(topic) - len(topic.strip())
     zk = init_zk(namespace_kafka)
-    if zk.exists('/brokers/topics/' + topic) is not None:
+    if zk.exists('/brokers/topics/' + topic) is not None and number_of_whitespace == 0:
         return True
     else:
         return False
@@ -346,12 +347,12 @@ def get_mappings():
 def write_mapping(ct, topic, active):
     """Docstring."""
     zk = init_zk(namespace_saiki)
-
-    ct_enc = urllib.parse.quote(ct, safe='')
-    zk.create('/content_types/' + ct_enc + '/topics/' + topic,
+    if validate_topic(topic):
+        ct_enc = urllib.parse.quote(ct, safe='')
+        zk.create('/content_types/' + ct_enc + '/topics/' + topic,
               json.dumps({'active': active}).encode('utf-8'),
               makepath=True)
-    logging.info("created topic mapping : CT: " + ct_enc + ", Topic: " +
+        logging.info("created topic mapping : CT: " + ct_enc + ", Topic: " +
                  topic + ", data: " + json.dumps({'active': active}))
 
 
@@ -424,12 +425,13 @@ def update_template(template_form):
     zk = init_zk(namespace_saiki)
     template = template_form.template_name.data
     template_data = template_form.template_data.data.encode()
-    try:
-        zk.create('/templates/' + template, template_data)
-        return True
-    except NodeExistsError:
-        zk.set('/templates/' + template, template_data)
-        return True
+    if validate_topic(template):
+        try:
+            zk.create('/templates/' + template, template_data)
+            return True
+        except NodeExistsError:
+            zk.set('/templates/' + template, template_data)
+            return True
 
 
 def delete_template(template):
