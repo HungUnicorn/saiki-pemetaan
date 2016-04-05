@@ -225,7 +225,8 @@ def validate_topic(topic):
     """Docstring."""
     number_of_whitespace = len(topic) - len(topic.strip())
     zk = init_zk(namespace_kafka)
-    if zk.exists('/brokers/topics/' + topic) is not None and number_of_whitespace == 0:
+    if zk.exists('/brokers/topics/' + topic) is not None \
+            and number_of_whitespace == 0:
         return True
     else:
         return False

@@ -9,19 +9,25 @@ from wtforms.validators import DataRequired, ValidationError
 def validate_whitespace(Form, field):
     num_whitespace = len(field.data) - len(field.data.strip())
     if num_whitespace != 0:
-        raise ValidationError('Please remove {} white space'.format(num_whitespace))
+        raise ValidationError('Please remove {} white space'
+                              .format(num_whitespace))
 
 
 class MappingForm(Form):
-    content_type = StringField('Content-Type', validators=[DataRequired(), validate_whitespace])
-    topic = StringField('Topic', validators=[DataRequired(), validate_whitespace])
+    content_type = StringField('Content-Type',
+                               validators=[DataRequired(),
+                                validate_whitespace])
+
+    topic = StringField('Topic', validators=[DataRequired(),
+                                             validate_whitespace])
     active = BooleanField('Active Mapping?',
                           description='Should this be the active mapping for \
                           this Content-Type?')
 
 
 class TopicForm(Form):
-    topic_name = StringField('Topic-Name', validators=[DataRequired(), validate_whitespace])
+    topic_name = StringField('Topic-Name', validators=[DataRequired(),
+                                                       validate_whitespace])
     replication_factor = IntegerField('Replication Factor',
                                       validators=[DataRequired()])
     partition_count = IntegerField('Partition Count',
@@ -61,6 +67,8 @@ class MultiCheckboxField(SelectMultipleField):
 
 
 class TemplateForm(Form):
-    template_name = StringField('Template-Name', validators=[DataRequired(), validate_whitespace])
+    template_name = StringField('Template-Name',
+                                validators=[DataRequired(),
+                                            validate_whitespace])
     template_data = StringField('Template-Data', widget=TextArea(),
                                 validators=[DataRequired()])
