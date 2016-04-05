@@ -16,7 +16,7 @@ def validate_whitespace(Form, field):
 class MappingForm(Form):
     content_type = StringField('Content-Type',
                                validators=[DataRequired(),
-                                validate_whitespace])
+                                           validate_whitespace])
 
     topic = StringField('Topic', validators=[DataRequired(),
                                              validate_whitespace])

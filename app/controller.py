@@ -351,10 +351,10 @@ def write_mapping(ct, topic, active):
     if validate_topic(topic):
         ct_enc = urllib.parse.quote(ct, safe='')
         zk.create('/content_types/' + ct_enc + '/topics/' + topic,
-              json.dumps({'active': active}).encode('utf-8'),
-              makepath=True)
+                  json.dumps({'active': active}).encode('utf-8'),
+                  makepath=True)
         logging.info("created topic mapping : CT: " + ct_enc + ", Topic: " +
-                 topic + ", data: " + json.dumps({'active': active}))
+                     topic + ", data: " + json.dumps({'active': active}))
 
 
 def delete_mapping(ct, topic):
