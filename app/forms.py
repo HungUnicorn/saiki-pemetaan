@@ -4,22 +4,25 @@ from wtforms import BooleanField, IntegerField, HiddenField, SelectField,\
 from wtforms.widgets import TextArea
 from wtforms.fields import StringField
 from wtforms.validators import DataRequired, ValidationError
+from flask import flash
+import re
 
 
-def validate_whitespace(Form, field):
-    num_whitespace = len(field.data) - len(field.data.strip())
-    if num_whitespace != 0:
-        raise ValidationError('Please remove {} white space'
-                              .format(num_whitespace))
+def validate_regx(Form, field):
+    pattern = r'^\w+$'
+    match = re.match(pattern, field.data)
+    if match is None:
+        flash('"{}" is not valid'.format(field.data), 'critical')
+        raise ValidationError('Not a valid name')
 
 
 class MappingForm(Form):
     content_type = StringField('Content-Type',
                                validators=[DataRequired(),
-                                           validate_whitespace])
+                                           validate_regx])
 
     topic = StringField('Topic', validators=[DataRequired(),
-                                             validate_whitespace])
+                                             validate_regx])
     active = BooleanField('Active Mapping?',
                           description='Should this be the active mapping for \
                           this Content-Type?')
@@ -27,7 +30,7 @@ class MappingForm(Form):
 
 class TopicForm(Form):
     topic_name = StringField('Topic-Name', validators=[DataRequired(),
-                                                       validate_whitespace])
+                                                       validate_regx])
     replication_factor = IntegerField('Replication Factor',
                                       validators=[DataRequired()])
     partition_count = IntegerField('Partition Count',
@@ -69,6 +72,6 @@ class MultiCheckboxField(SelectMultipleField):
 class TemplateForm(Form):
     template_name = StringField('Template-Name',
                                 validators=[DataRequired(),
-                                            validate_whitespace])
+                                            validate_regx])
     template_data = StringField('Template-Data', widget=TextArea(),
                                 validators=[DataRequired()])
