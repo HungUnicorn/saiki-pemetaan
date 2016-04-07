@@ -12,7 +12,8 @@ def validate_regx(Form, field):
     pattern = r'^\w+$'
     match = re.match(pattern, field.data)
     if match is None:
-        flash('"{}" is not valid'.format(field.data), 'critical')
+        flash('"{}" is not valid. Please do not use whitespace, '
+              'backslash and slash!'.format(field.data), 'critical')
         raise ValidationError('Not a valid name')
 
 
