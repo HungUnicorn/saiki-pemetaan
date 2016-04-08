@@ -12,8 +12,8 @@
       <form method="POST" action="/topic_mapping/create">
     {{ form.hidden_tag() }}
     <table>
-        <tr><td>{{ form.content_type.label }} </td><td>{{ form.content_type(size=20) }}</td></tr>
-         <tr><td>{{ form.topic.label }} </td><td>{{ form.topic(size=20) }}</td></tr>
+        <tr><td>{{ form.content_type.label }} </td><td>{{ form.content_type(size=70) }}</td></tr>
+         <tr><td>{{ form.topic.label }} </td><td>{{ form.topic(size=70) }}</td></tr>
           <tr><td>{{ form.active.label }} </td><td>{{ form.active(size=20) }}</td></tr>
           <tr><td> </td><td><input type="submit" value="Go"></td></tr>
       </table>
