@@ -1,7 +1,7 @@
 # coding=utf-8
 """Controller File."""
 from zookeeper import init_zk, get_namespace_kafka, get_namespace_saiki, \
-    get_namespace_pemetaan
+    get_namespace_pemetaan, change_topic_config
 from kazoo.client import NoNodeError, NodeExistsError
 import json
 from rebalance_partitions import get_zk_dict, generate_json, \
@@ -179,16 +179,7 @@ def update_config(cform):
         config_dict['config']['segment.jitter.ms'] = str(
             cform.segment_jitter_ms.data)
 
-    try:
-        zk.create('/config/topics/' + topic,
-                  json.dumps(config_dict).encode('utf-8'),
-                  makepath=True)
-    except NodeExistsError:
-        zk.set('/config/topics/' + topic,
-               json.dumps(config_dict).encode('utf-8'))
-
-    logging.info("created/updated topic config: topic: " + topic +
-                 " , config : " + str(config_dict))
+    change_topic_config(zk=zk, topic=topic, config_dict=config_dict)
 
 
 def create_topic_entry(topic_name, partition_count, replication_factor):
