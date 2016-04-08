@@ -206,7 +206,7 @@ def update_topic_config(zk, topic, config_dict):
 
 
 def notify_topic_config_change(zk, topic, config_dict):
-    node = '/config/changes/config_change_1'
+    node = '/config/changes/config_change_' + topic
     content = {'version': 1,
                'entity_type': 'topics',
                'entity_name': topic}
@@ -214,7 +214,7 @@ def notify_topic_config_change(zk, topic, config_dict):
         zk.create(node, json.dumps(content, separators=(',', ':'))
                   .encode('utf-8'), makepath=True)
     except NodeExistsError:
-        zk.set('/config/changes/config_change_',
+        zk.set(node,
                json.dumps(content, separators=(',', ':'))
                .encode('utf-8'))
 
