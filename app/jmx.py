@@ -45,7 +45,7 @@ def get_metric_per_broker(broker, metric, value_key=None):
         else:
             return response['value']
     else:
-        logging.warning("can't get jmx metrics from " +
-                        broker + ':8778/jolokia/read/' +
-                        metric)
+        logging.warning(
+            "can't get jmx metrics from %s:8778/jolokia/read/%s. Response: %s",
+            broker, metric, response)
         return "-1"
