@@ -4,6 +4,7 @@ import datetime
 import json
 import logging
 import urllib
+import uuid
 
 from rebalance_partitions import get_zk_dict, generate_json, \
     NotEnoughBrokersException, write_json_to_zk
@@ -206,7 +207,7 @@ def update_topic_config(zk, topic, config_dict):
 
 
 def notify_topic_config_change(zk, topic, config_dict):
-    node = '/config/changes/config_change_' + topic
+    node = '/config/changes/config_change_' + str(uuid.uuid4().int)
     content = {'version': 1,
                'entity_type': 'topics',
                'entity_name': topic}
@@ -214,9 +215,8 @@ def notify_topic_config_change(zk, topic, config_dict):
         zk.create(node, json.dumps(content, separators=(',', ':'))
                   .encode('utf-8'), makepath=True)
     except NodeExistsError:
-        zk.set(node,
-               json.dumps(content, separators=(',', ':'))
-               .encode('utf-8'))
+        logging.info("fail to create topic change: " + topic +
+                     " , config : " + str(content))
 
 
 def create_topic_entry(topic_name, partition_count, replication_factor):
