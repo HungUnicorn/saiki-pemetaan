@@ -145,7 +145,8 @@ def create_topic_mapping():
         mform.validate_on_submit()  # to get error messages to the browser
         if request.method == 'POST':
             if mform.validate() is False:
-                flash('All fields are required.', 'critical')
+                flash('Please check that all the fields are valid.',
+                      'critical')
                 return check_and_render('topic_mapping_create.html',
                                         form=mform)
             else:
@@ -246,7 +247,8 @@ def create_topic():
         tform.validate_on_submit()  # to get error messages to the browser
         if request.method == 'POST':
             if tform.validate() is False:
-                flash('All fields are required.', 'critical')
+                flash('Please check that all the fields are valid.',
+                      'critical')
                 return check_and_render('topics_create.html',
                                         form=tform)
             else:
@@ -367,7 +369,7 @@ def saiki_templates_edit():
             template_form.validate_on_submit()
             print(template_form)
             if template_form.validate() is False:
-                flash('Please check that all the fields are valid!.',
+                flash('Please check that all the fields are valid.',
                       'critical')
                 return check_and_render('saiki_templates_edit.html',
                                         form=template_form)

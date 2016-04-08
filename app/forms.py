@@ -1,27 +1,41 @@
 from flask_wtf import Form
-from wtforms import TextField,\
-    BooleanField, IntegerField, HiddenField, SelectField,\
+from wtforms import BooleanField, IntegerField, HiddenField, SelectField,\
     SelectMultipleField, widgets
 from wtforms.widgets import TextArea
 from wtforms.fields import StringField
-from wtforms.validators import Required
+from wtforms.validators import DataRequired, ValidationError
+from flask import flash
+import re
+
+
+def validate_regx(Form, field):
+    pattern = r'^\w+$'
+    match = re.match(pattern, field.data)
+    if match is None:
+        flash('"{}" is not valid. Please do not use whitespace, '
+              'backslash and slash!'.format(field.data), 'critical')
+        raise ValidationError('Not a valid name')
 
 
 class MappingForm(Form):
-    content_type = TextField('Content-Type', validators=[Required()])
-    topic = TextField('Topic', validators=[Required()])
+    content_type = StringField('Content-Type',
+                               validators=[DataRequired(),
+                                           validate_regx])
+
+    topic = StringField('Topic', validators=[DataRequired(),
+                                             validate_regx])
     active = BooleanField('Active Mapping?',
                           description='Should this be the active mapping for \
                           this Content-Type?')
 
 
 class TopicForm(Form):
-    topic_name = TextField('Topic-Name',
-                           validators=[Required()])
+    topic_name = StringField('Topic-Name', validators=[DataRequired(),
+                                                       validate_regx])
     replication_factor = IntegerField('Replication Factor',
-                                      validators=[Required()])
+                                      validators=[DataRequired()])
     partition_count = IntegerField('Partition Count',
-                                   validators=[Required()])
+                                   validators=[DataRequired()])
 
 
 class ConfigForm(Form):
@@ -57,7 +71,8 @@ class MultiCheckboxField(SelectMultipleField):
 
 
 class TemplateForm(Form):
-    template_name = TextField('Template-Name',
-                              validators=[Required()])
+    template_name = StringField('Template-Name',
+                                validators=[DataRequired(),
+                                            validate_regx])
     template_data = StringField('Template-Data', widget=TextArea(),
-                                validators=[Required()])
+                                validators=[DataRequired()])
