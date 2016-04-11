@@ -1,6 +1,6 @@
 from flask_wtf import Form
 from wtforms import BooleanField, IntegerField, HiddenField, SelectField,\
-    SelectMultipleField, widgets
+    SelectMultipleField, widgets, FloatField
 from wtforms.widgets import TextArea
 from wtforms.fields import StringField
 from wtforms.validators import DataRequired, ValidationError
@@ -49,7 +49,7 @@ class ConfigForm(Form):
     flush_messages = IntegerField('flush_messages')
     flush_ms = IntegerField('flush_ms')
     index_interval_bytes = IntegerField('index_interval_bytes')
-    min_cleanable_dirty_ratio = IntegerField('min_cleanable_dirty_ratio')
+    min_cleanable_dirty_ratio = FloatField('min_cleanable_dirty_ratio')
     min_insync_replicas = IntegerField('min_insync_replicas')
     retention_bytes = IntegerField('retention_bytes')
     segment_index_bytes = IntegerField('segment_index_bytes')
