@@ -71,5 +71,19 @@
             {% endif %}
           </td>
         </tr>
+        <tr>
+          <td>Show Mangan?</td>
+          <td>
+            {% if settings['show_mangan'] == True %}
+              <a href="{{url_for('.pemetaan_settings')}}?setting=show_mangan&value=false">
+                {{ active_button() }}
+              </a>
+            {% else %}
+              <a href="{{url_for('.pemetaan_settings')}}?setting=show_mangan&value=true">
+                {{ inactive_button() }}
+              </a>
+            {% endif %}
+          </td>
+        </tr>
     </div>
 {% endblock %}

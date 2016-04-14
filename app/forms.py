@@ -1,9 +1,9 @@
 from flask_wtf import Form
 from wtforms import BooleanField, IntegerField, HiddenField, SelectField,\
-    SelectMultipleField, widgets, FloatField
+    SelectMultipleField, widgets, FloatField, TextField
 from wtforms.widgets import TextArea
 from wtforms.fields import StringField
-from wtforms.validators import DataRequired, ValidationError
+from wtforms.validators import DataRequired, ValidationError, Required
 from flask import flash
 import re
 
@@ -27,6 +27,15 @@ class MappingForm(Form):
     active = BooleanField('Active Mapping?',
                           description='Should this be the active mapping for \
                           this Content-Type?')
+
+
+class ConsumerGroupForm(Form):
+    consumer_group = TextField('Consumer Group', validators=[Required()])
+
+
+class ManganEventTypeForm(Form):
+    et = TextField('Event Type', validators=[Required()])
+    cg = HiddenField('Consumer Group', validators=[Required()])
 
 
 class TopicForm(Form):

@@ -11,12 +11,14 @@ import requests
 import json
 # import uwsgi_metrics
 from forms import MappingForm, TopicForm, ConfigForm, MultiCheckboxField, \
-    TemplateForm
+    TemplateForm, ConsumerGroupForm, ManganEventTypeForm
 from controller import get_mappings, write_mapping, delete_mapping, \
     get_topics, create_topic_entry, get_config, update_config, \
     validate_topic, delete_topic_entry, reassign_all_topics, get_brokers, \
     get_saiki_templates, get_saiki_template_single, update_template, \
-    delete_template, get_settings, update_settings
+    delete_template, get_settings, update_settings, get_mangan_settings, \
+    create_mangan_consumer_group, create_mangan_event_type, \
+    delete_mangan_event_type, get_mangan_offsets, set_mangan_offset
 
 logging.basicConfig(level=getattr(logging, 'INFO', None))
 logging.getLogger("requests").setLevel(logging.WARNING)
@@ -489,7 +491,7 @@ def validate_access_token():
 
 @app.route('/settings')
 def pemetaan_settings():
-    """Settings Overview Page."""
+    """Creating Settings Overview Page."""
     if only_check():
         setting = request.args.get('setting')
         value = request.args.get('value')
@@ -501,6 +503,110 @@ def pemetaan_settings():
         else:
             return check_and_render('settings.html',
                                     settings=get_settings())
+    else:
+        return check_and_render('index.html')
+
+
+@app.route('/mangan')
+def mangan_index():
+    """Mangan Index Page."""
+    if only_check():
+        delete_et = request.args.get('delete_et')
+        c_group = request.args.get('c_group')
+        if delete_et is not None and delete_et != '':
+            delete_mangan_event_type(c_group, delete_et)
+            flash('deleted Event Type ' +
+                  delete_et +
+                  ' in Consumer Group ' +
+                  c_group)
+        return check_and_render('mangan.html',
+                                c_group_param=c_group,
+                                mangan_settings=get_mangan_settings())
+    else:
+        return check_and_render('index.html')
+
+
+@app.route('/mangan/create/consumer_group', methods=('GET', 'POST'))
+def create_mangan_consumer_group_page():
+    """Display Mangan Consumer Group Creation Page."""
+    if only_check():
+        if request.method == 'POST':
+            c_group_form = ConsumerGroupForm()
+            if c_group_form.validate() is False:
+                flash('Please check that all the fields are valid!.',
+                      'critical')
+                return check_and_render('mangan_create_c_group.html',
+                                        form=c_group_form)
+            else:
+                create_mangan_consumer_group(c_group_form.consumer_group.data)
+                flash('created Consumer Group: ' +
+                      c_group_form.consumer_group.data)
+                return redirect(url_for('mangan_index') +
+                                "?c_group=" +
+                                c_group_form.consumer_group.data)
+        elif request.method == 'GET':
+            c_group_form = ConsumerGroupForm()
+            return check_and_render('mangan_create_c_group.html',
+                                    form=c_group_form)
+    else:
+        return check_and_render('index.html')
+
+
+@app.route('/mangan/create/event_type', methods=('GET', 'POST'))
+def create_mangan_event_type_page():
+    """Display Mangan Consumer Group Creation Page."""
+    if only_check():
+        if request.method == 'POST':
+            et_form = ManganEventTypeForm()
+            print(et_form)
+            if et_form.validate() is False:
+                flash('Please check that all the fields are valid!.',
+                      'critical')
+                return check_and_render('mangan_create_et.html',
+                                        form=et_form)
+            else:
+                create_mangan_event_type(et_form.cg.data, et_form.et.data)
+                flash('created Event Type ' +
+                      et_form.et.data +
+                      ' in Consumer Group ' +
+                      et_form.cg.data)
+                return redirect(url_for('mangan_index') +
+                                "?c_group=" +
+                                et_form.cg.data)
+        elif request.method == 'GET':
+            cg = request.args.get('c_group')
+            et_form = ManganEventTypeForm(cg=cg)
+            return check_and_render('mangan_create_et.html',
+                                    form=et_form,
+                                    cg=cg)
+    else:
+        return check_and_render('index.html')
+
+
+@app.route('/mangan_offsets')
+def mangan_offsets():
+    """Investigate on Mangan Offsets."""
+    if only_check():
+        et = request.args.get('et')
+        offsets = get_mangan_offsets(et)
+        return check_and_render('mangan_offsets.html',
+                                et=et,
+                                offsets=offsets)
+    else:
+        return check_and_render('index.html')
+
+
+@app.route('/mangan_offsets/set')
+def mangan_set_offset():
+    """Investigate on Mangan Offsets."""
+    if only_check():
+        key = request.args.get('key')
+        value = request.args.get('value')
+        set_mangan_offset(key, value)
+        offsets = get_mangan_offsets(key[:-1])
+        return check_and_render('mangan_offsets.html',
+                                et=key[:-1],
+                                offsets=offsets)
     else:
         return check_and_render('index.html')
 

@@ -31,6 +31,7 @@
                         {% if display_settings['show_topics'] %}<li><a href="{{url_for('.topics')}}">Topics</a></li>{% endif %}
                         {% if display_settings['show_mappings'] %}<li><a href="{{url_for('.topic_mapping')}}">Topic Mapping</a></li>{% endif %}
                         {% if display_settings['show_templates'] %}<li><a href="{{url_for('.saiki_templates')}}">Message Templates</a></li>{% endif %}
+                        {% if display_settings['show_mangan'] %}<li><a href="{{url_for('.mangan_index')}}">Mangan</a></li>{% endif %}
                         <li><a href="{{url_for('.pemetaan_settings')}}">Settings</a></li>
                       {% endif %}
                     </ul>

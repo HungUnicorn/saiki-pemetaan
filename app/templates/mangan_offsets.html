@@ -1,0 +1,34 @@
+{% extends "pemetaan_base.html" %}
+
+{% import "bootstrap/wtf.html" as wtf %}
+{% import "bootstrap/fixes.html" as fixes %}
+{% import "bootstrap/utils.html" as util %}
+
+{% block content %}
+{{util.flashed_messages(dismissible=True)}}
+    <div class="container">
+      <div class="col-md-12">
+        <h1>Mangan</h1>
+        <b>{{ et }}</b>
+        <table id="offset_table" class="table">
+          <thead>
+            <tr>
+              <th>key</th>
+              <th>Offset</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for key, value in offsets | dictsort %}
+              <tr>
+                <td>{{ key }}</td>
+                <td>{{ value }}</td>
+                <!-- Currently only temporary -->
+                <td><a href="{{url_for('.mangan_set_offset')}}?key={{ key }}&value=">Set Offset</a></td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+  </div>
+{% endblock %}

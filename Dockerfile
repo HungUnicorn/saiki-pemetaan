@@ -4,6 +4,7 @@ MAINTAINER team-saiki@zalando.de
 ENV ZOOKEEPER_NAMESPACE_SAIKI=/saiki
 ENV ZOOKEEPER_NAMESPACE_KAFKA=/buku
 ENV ZOOKEEPER_NAMESPACE_PEMETAAN=/pemetaan
+ENV ZOOKEEPER_NAMESPACE_MANGAN=/mangan
 
 # needed for uwsgi_metrics (treap module)
 RUN apt-get update
