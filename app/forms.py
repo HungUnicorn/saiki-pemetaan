@@ -15,6 +15,15 @@ class MappingForm(Form):
                           this Content-Type?')
 
 
+class ConsumerGroupForm(Form):
+    consumer_group = TextField('Consumer Group', validators=[Required()])
+
+
+class ManganEventTypeForm(Form):
+    et = TextField('Event Type', validators=[Required()])
+    cg = HiddenField('Consumer Group', validators=[Required()])
+
+
 class TopicForm(Form):
     topic_name = TextField('Topic-Name',
                            validators=[Required()])

@@ -1,0 +1,54 @@
+{% extends "pemetaan_base.html" %}
+
+{% import "bootstrap/wtf.html" as wtf %}
+{% import "bootstrap/fixes.html" as fixes %}
+{% import "bootstrap/utils.html" as util %}
+
+{% block content %}
+{{util.flashed_messages(dismissible=True)}}
+    <div class="container">
+      <div class="col-md-12">
+        <h1>Mangan</h1>
+        <p>
+          <a class="btn btn-info" role="button" href="{{url_for('.create_mangan_consumer_group_page')}}">Create New Consumer Group</a>
+          {% if c_group_param != '' and c_group_param != None %}
+            <a class="btn btn-info" role="button" href="{{url_for('.create_mangan_event_type_page')}}?c_group={{ c_group_param }}">Create New Event-Type</a>
+          {% else %}
+            <a class="btn btn-info disabled" role="button" href="{{url_for('.create_mangan_event_type_page')}}?c_group={{ c_group_param }}">Create New Event-Type</a>
+          {% endif %}
+        </p>
+      </div>
+      <div class="col-md-2">
+        <div class="list-group">
+          <div class="list-group-item"><b>Consumer Groups</b></div>
+          {% for c_group_name, c_group_value in mangan_settings | dictsort %}
+            <a class="list-group-item {% if c_group_name == c_group_param %}active{% endif %}" href="{{url_for('.mangan_index')}}?c_group={{ c_group_name }}">{{ c_group_name }}</a>
+          {% endfor %}
+        </div>
+      </div>
+      <div class="col-md-10">
+        <table id="topic_table" class="table">
+          <thead>
+            <tr>
+              <th>Event-Type</th>
+              <th>Offset</th>
+              <th>Delete</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for c_group_name, c_group_values in mangan_settings.items() %}
+              {% if c_group_name == c_group_param %}
+                {% for et in c_group_values %}
+                  <tr>
+                    <td>{{ et }}</td>
+                    <td><a href="{{url_for('.mangan_offsets')}}?et={{ et }}">View</a></td>
+                    <td><a href="{{url_for('.mangan_index')}}?c_group={{ c_group_param }}&delete_et={{ et }}"><span class="glyphicon glyphicon-remove red" aria-hidden="true"></a></td>
+                  </tr>
+                {% endfor %}
+              {% endif %}
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+  </div>
+{% endblock %}

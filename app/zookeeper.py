@@ -28,3 +28,7 @@ def get_namespace_saiki():
 
 def get_namespace_pemetaan():
     return os.getenv('ZOOKEEPER_NAMESPACE_PEMETAAN')
+
+
+def get_namespace_mangan():
+    return os.getenv('ZOOKEEPER_NAMESPACE_MANGAN')
