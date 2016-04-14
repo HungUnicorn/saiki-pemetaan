@@ -1,19 +1,23 @@
 # coding=utf-8
 """Controller File."""
+from kazoo.client import NoNodeError, NodeExistsError
 from zookeeper import init_zk, get_namespace_kafka, get_namespace_saiki, \
     get_namespace_pemetaan, get_namespace_mangan
-from kazoo.client import NoNodeError, NodeExistsError
+import datetime
 import json
+import logging
+import urllib
+import time
+
 from rebalance_partitions import get_zk_dict, generate_json, \
     NotEnoughBrokersException, write_json_to_zk
-import logging
-import datetime
-import urllib
+
 import jmx
 import os
 import redis
 
 r = redis.StrictRedis(host=os.getenv('REDIS_HOST'), port=6379, db=0)
+
 
 namespace_kafka = get_namespace_kafka()
 namespace_saiki = get_namespace_saiki()
@@ -184,16 +188,39 @@ def update_config(cform):
         config_dict['config']['segment.jitter.ms'] = str(
             cform.segment_jitter_ms.data)
 
+    change_topic_config(zk=zk, topic=topic, config_dict=config_dict)
+
+
+def change_topic_config(zk, topic, config_dict):
+    """
+    Update the config for an existing topic and create a change notification
+    so the change will propagate to other brokers
+    """
+    update_topic_config(zk, topic, config_dict)
+    notify_topic_config_change(zk, topic, config_dict)
+    logging.info("created/updated topic config: topic: " + topic +
+                 " , config : " + str(config_dict))
+
+
+def update_topic_config(zk, topic, config_dict):
     try:
         zk.create('/config/topics/' + topic,
-                  json.dumps(config_dict).encode('utf-8'),
-                  makepath=True)
+                  json.dumps(config_dict).encode('utf-8'), makepath=True)
     except NodeExistsError:
         zk.set('/config/topics/' + topic,
                json.dumps(config_dict).encode('utf-8'))
 
-    logging.info("created/updated topic config: topic: " + topic +
-                 " , config : " + str(config_dict))
+
+def notify_topic_config_change(zk, topic, config_dict):
+    node = '/config/changes/config_change_' + str(int(time.time()))
+    content = {'version': 1,
+               'entity_type': 'topics',
+               'entity_name': topic}
+    try:
+        zk.create(node, json.dumps(content).encode('utf-8'), makepath=True)
+    except NodeExistsError:
+        logging.info("fail to create topic change: " + topic +
+                     " , config : " + str(content))
 
 
 def create_topic_entry(topic_name, partition_count, replication_factor):
@@ -228,8 +255,10 @@ def delete_topic_entry(topic_name):
 
 def validate_topic(topic):
     """Docstring."""
+    number_of_whitespace = len(topic) - len(topic.strip())
     zk = init_zk(namespace_kafka)
-    if zk.exists('/brokers/topics/' + topic) is not None:
+    if zk.exists('/brokers/topics/' + topic) is not None \
+            and number_of_whitespace == 0:
         return True
     else:
         return False
@@ -351,13 +380,13 @@ def get_mappings():
 def write_mapping(ct, topic, active):
     """Docstring."""
     zk = init_zk(namespace_saiki)
-
-    ct_enc = urllib.parse.quote(ct, safe='')
-    zk.create('/content_types/' + ct_enc + '/topics/' + topic,
-              json.dumps({'active': active}).encode('utf-8'),
-              makepath=True)
-    logging.info("created topic mapping : CT: " + ct_enc + ", Topic: " +
-                 topic + ", data: " + json.dumps({'active': active}))
+    if validate_topic(topic):
+        ct_enc = urllib.parse.quote(ct, safe='')
+        zk.create('/content_types/' + ct_enc + '/topics/' + topic,
+                  json.dumps({'active': active}).encode('utf-8'),
+                  makepath=True)
+        logging.info("created topic mapping : CT: " + ct_enc + ", Topic: " +
+                     topic + ", data: " + json.dumps({'active': active}))
 
 
 def delete_mapping(ct, topic):
@@ -429,12 +458,13 @@ def update_template(template_form):
     zk = init_zk(namespace_saiki)
     template = template_form.template_name.data
     template_data = template_form.template_data.data.encode()
-    try:
-        zk.create('/templates/' + template, template_data)
-        return True
-    except NodeExistsError:
-        zk.set('/templates/' + template, template_data)
-        return True
+    if validate_topic(template):
+        try:
+            zk.create('/templates/' + template, template_data)
+            return True
+        except NodeExistsError:
+            zk.set('/templates/' + template, template_data)
+            return True
 
 
 def delete_template(template):

@@ -1,7 +1,8 @@
+import logging
+
+import os
 from kazoo.client import KazooClient
 from kazoo.handlers.threading import KazooTimeoutError
-import os
-import logging
 
 
 def init_zk(namespace=''):

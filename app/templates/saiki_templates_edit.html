@@ -25,7 +25,21 @@
             }
         })}
         validate_textarea();
-        $("#template_data").change(function() {validate_textarea()})
+        $("#template_data").change(function() {validate_textarea()});
+
+    // prevent creating and updating wrong JSON
+         function validate_submit( event ) {
+            $("#template_data").validateJSON({
+            compress: false,
+            reformat: true,
+            onError: function () {
+              event.preventDefault();
+            },
+            onSuccess: function () {
+            }
+        })}
+        $( "form" ).submit(function(event) {validate_submit( event )});
+
 </script>
 {% endblock %}
 
@@ -36,9 +50,9 @@
             <form method="POST" action="{{url_for('.saiki_templates_edit')}}">
             {{ form.hidden_tag() }}
             <p>{{ form.template_name.label }}</p>
-            <p>{{ form.template_name(size=20) }}</p>
+            <p>{{ form.template_name(size=70) }}</p>
             <p>{{ form.template_data.label }}</p>
-            <p>{{ form.template_data(cols=120, rows=8) }}</p>
+            <p>{{ form.template_data(cols=90, rows=40) }}</p>
             <p>
                 <table>
                     <tr>
@@ -47,5 +61,6 @@
                     </tr>
                 </table>
             </p>
+            </form>
     </div>
 {% endblock %}
