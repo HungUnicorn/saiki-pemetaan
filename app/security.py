@@ -3,8 +3,9 @@ import logging
 import os
 
 import requests
-from flask import flash, session, render_template, redirect
+from flask import flash, session, render_template, redirect, url_for
 from flask_oauthlib.client import OAuth
+from controller import get_settings
 
 
 def get_auth_oauth_token():
