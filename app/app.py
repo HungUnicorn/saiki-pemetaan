@@ -1,14 +1,14 @@
 # coding=utf-8
 """Main App File."""
+import json
 import logging
-from flask import Flask, render_template, flash, request, redirect, url_for, \
+
+import os
+from flask import Flask, flash, request, redirect, url_for, \
     session
 from flask_bootstrap import Bootstrap
 from flask_wtf import Form
-from flask_oauthlib.client import OAuth
-import os
-import requests
-import json
+
 # import uwsgi_metrics
 from forms import MappingForm, TopicForm, ConfigForm, MultiCheckboxField, \
     TemplateForm, ConsumerGroupForm, ManganEventTypeForm
@@ -19,6 +19,8 @@ from controller import get_mappings, write_mapping, delete_mapping, \
     delete_template, get_settings, update_settings, get_mangan_settings, \
     create_mangan_consumer_group, create_mangan_event_type, \
     delete_mangan_event_type, get_mangan_offsets, set_mangan_offset
+
+from security import check_and_render, only_check, get_auth
 
 logging.basicConfig(level=getattr(logging, 'INFO', None))
 logging.getLogger("requests").setLevel(logging.WARNING)
@@ -38,32 +40,7 @@ app.debug = True
 app.secret_key = os.getenv('APP_SECRET_KEY', 'development')
 
 
-oauth = OAuth(app)
-
-with open(os.path.join(os.getenv('CREDENTIALS_DIR',
-                                 ''), 'client.json')) as fd:
-        client_credentials = json.load(fd)
-
-oauth_api_endpoint = os.getenv('ACCESS_TOKEN_URL', '')
-oauth_tokeninfo_endpoint = os.getenv('TOKENINFO_URL', '')
-
-if oauth_api_endpoint == '':
-    logging.error("no OAuth Endpoint provided. Exiting ...")
-    exit(1)
-
-auth = oauth.remote_app(
-    'auth',
-    consumer_key=client_credentials['client_id'],
-    consumer_secret=client_credentials['client_secret'],
-    request_token_params={'scope': 'uid'},
-    base_url=oauth_api_endpoint,
-    request_token_url=None,
-    access_token_method='POST',
-    access_token_url=oauth_api_endpoint + '/oauth2/' +
-                                          'access_token?realm=employees',
-    authorize_url=oauth_api_endpoint + '/oauth2/'
-                                       'authorize?realm=employees'
-)
+auth = get_auth(app)
 
 # AppConfig(app, configfile)
 # Flask-Appconfig is not necessary, but
@@ -75,30 +52,6 @@ Bootstrap(app)
 app.config['SECRET_KEY'] = 'devkey'
 app.config['RECAPTCHA_PUBLIC_KEY'] = \
     '6Lfol9cSAAAAADAkodaYl9wvQCwBMr3qGR_PPHcw'
-
-
-def only_check():
-    """Check if Oauth Login is valid."""
-    isloggedin, token_info = validate_access_token()
-    if isloggedin:
-        return True
-    else:
-        return False
-
-
-def check_and_render(template, force_render=False, **kwargs):
-    """Check if Oauth Login is valid and render supplied page."""
-    isloggedin, token_info = validate_access_token()
-    if isloggedin:
-        return render_template(template,
-                               access_token=token_info,
-                               display_settings=get_settings(),
-                               **kwargs)
-    elif (force_render is True):
-        return render_template(template)
-    else:
-        flash('You need to be logged in to do that!', 'critical')
-        return redirect(url_for('index'))
 
 
 @app.template_filter('to_json')
@@ -435,58 +388,6 @@ def authorized():
 def get_auth_oauth_token():
     """Docstring."""
     return session.get('auth_token')
-
-
-def check_team(user, team=os.getenv('TEAMCHECK_ID', '')):
-    """
-    Check if the logged in user is in the correct team, if supplied.
-
-    in case one parameter is not supplied, the check will always return true.
-    """
-    if team != '' and os.getenv('TEAMCHECK_API', '') != '':
-        logging.debug("checking with teams api ...")
-        token = get_auth_oauth_token()
-        logging.debug(token)
-        url = os.getenv('TEAMCHECK_API', '') + team
-        headers = {'Authorization': 'Bearer ' + token[0]}
-        r = requests.get(url, headers=headers)
-        member_list = json.loads(r.text)['member']
-        if user in member_list:
-            logging.debug("valid ...")
-            return True
-        else:
-            logging.error("valid user but not in the correct team ...")
-            return False
-    else:
-        return True
-
-
-def validate_access_token():
-    """Docstring."""
-    global app_props
-    if 'auth_token' in session:
-        response = requests.get("%s?access_token=%s" % (
-                                oauth_tokeninfo_endpoint,
-                                session['auth_token'][0]), verify=False)
-        response.close()
-        resp_json = response.json()
-        if 'error' in resp_json:
-            flash('Your token is not valid! (Expired?) Please login again! \
-                   Error message: ' +
-                  json.dumps(resp_json), 'critical')
-            # delete all remaining token data
-            session.pop('auth_token', None)
-            return False, response.json()
-        elif (check_team(resp_json["uid"]) is False):
-            flash('You are not in the Saiki Team, please apply for the ' +
-                  'correct Roles! Logged out!', 'critical')
-            # Should not be needed, auth token is not populated
-            session.pop('auth_token', None)
-            return False, response.json()
-        else:
-            return True, response.json()
-    else:
-        return False, None
 
 
 @app.route('/settings')
