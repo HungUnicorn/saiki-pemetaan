@@ -8,6 +8,14 @@ from flask import flash
 import re
 
 
+def validate_whitespace(Form, field):
+    whitespace_split_length = len(re.split('\s+', field.data))
+    if whitespace_split_length > 1:
+        flash(' Content-Type name \'{}\' is illegal, contains whitespace'
+              .format(field.data), 'critical')
+        raise ValidationError('Not a valid name')
+
+
 def validate_regx(Form, field):
     pattern = r'^\w+$'
     match = re.match(pattern, field.data)
