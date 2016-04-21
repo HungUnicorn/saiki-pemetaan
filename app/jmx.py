@@ -34,7 +34,7 @@ def get_metric_per_broker(broker, metric, value_key=None):
     try:
         response = json.loads(requests.get('http://' +
                                            broker + ':8778/jolokia/read/' +
-                                           metric).text)
+                                           metric, timeout=3).text)
     except requests.exceptions.ConnectionError:
         logging.warning("can't reach " +
                         broker + ':8778 for jmx metrics rest endpoint ...')

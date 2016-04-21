@@ -8,22 +8,39 @@ from flask import flash
 import re
 
 
+def validate_whitespace(Form, field):
+    whitespace_split_length = len(re.split('\s+', field.data))
+    if whitespace_split_length > 1:
+        flash(' Content-Type name \'{}\' is illegal, contains whitespace'
+              .format(field.data), 'critical')
+        raise ValidationError('Not a valid name')
+
+
 def validate_regx(Form, field):
-    pattern = r'^\w+$'
+    pattern = r'^[a-zA-Z0-9\._\-]+$'
     match = re.match(pattern, field.data)
     if match is None:
-        flash('"{}" is not valid. Please do not use whitespace, '
-              'backslash and slash!'.format(field.data), 'critical')
+        flash(' topic name \'{}\' is illegal, contains a character other than '
+              'ASCII alphanumerics, \'.\', \'_\' and \'-\'!'
+              .format(field.data), 'critical')
+        raise ValidationError('Not a valid name')
+
+
+def validate_length(Form, field):
+    max_length = 255
+    if len(field.data) > max_length:
+        flash(' topic name is illegal, can\'t be longer than {} characters'
+              .format(len(field.data)), 'critical')
         raise ValidationError('Not a valid name')
 
 
 class MappingForm(Form):
     content_type = StringField('Content-Type',
                                validators=[DataRequired(),
-                                           validate_regx])
+                                           validate_whitespace])
 
     topic = StringField('Topic', validators=[DataRequired(),
-                                             validate_regx])
+                                             validate_regx, validate_length])
     active = BooleanField('Active Mapping?',
                           description='Should this be the active mapping for \
                           this Content-Type?')
@@ -40,7 +57,8 @@ class ManganEventTypeForm(Form):
 
 class TopicForm(Form):
     topic_name = StringField('Topic-Name', validators=[DataRequired(),
-                                                       validate_regx])
+                                                       validate_regx,
+                                                       validate_length])
     replication_factor = IntegerField('Replication Factor',
                                       validators=[DataRequired()])
     partition_count = IntegerField('Partition Count',
@@ -82,6 +100,6 @@ class MultiCheckboxField(SelectMultipleField):
 class TemplateForm(Form):
     template_name = StringField('Template-Name',
                                 validators=[DataRequired(),
-                                            validate_regx])
+                                            validate_whitespace])
     template_data = StringField('Template-Data', widget=TextArea(),
                                 validators=[DataRequired()])
