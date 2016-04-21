@@ -26,13 +26,21 @@ def validate_regx(Form, field):
         raise ValidationError('Not a valid name')
 
 
+def validate_length(Form, field):
+    max_length = 255
+    if len(field.data) > max_length:
+        flash(' topic name is illegal, can\'t be longer than {} characters'
+              .format(len(field.data)), 'critical')
+        raise ValidationError('Not a valid name')
+
+
 class MappingForm(Form):
     content_type = StringField('Content-Type',
                                validators=[DataRequired(),
                                            validate_whitespace])
 
     topic = StringField('Topic', validators=[DataRequired(),
-                                             validate_regx])
+                                             validate_regx, validate_length])
     active = BooleanField('Active Mapping?',
                           description='Should this be the active mapping for \
                           this Content-Type?')
@@ -49,7 +57,8 @@ class ManganEventTypeForm(Form):
 
 class TopicForm(Form):
     topic_name = StringField('Topic-Name', validators=[DataRequired(),
-                                                       validate_regx])
+                                                       validate_regx,
+                                                       validate_length])
     replication_factor = IntegerField('Replication Factor',
                                       validators=[DataRequired()])
     partition_count = IntegerField('Partition Count',
