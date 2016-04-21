@@ -17,10 +17,10 @@ def validate_whitespace(Form, field):
 
 
 def validate_regx(Form, field):
-    pattern = r'[a-zA-Z0-9\._\-]$'
+    pattern = r'^[a-zA-Z0-9\._\-]+$'
     match = re.match(pattern, field.data)
     if match is None:
-        flash(' topic name {} is illegal, contains a character other than '
+        flash(' topic name \'{}\' is illegal, contains a character other than '
               'ASCII alphanumerics, \'.\', \'_\' and \'-\'!'
               .format(field.data), 'critical')
         raise ValidationError('Not a valid name')
