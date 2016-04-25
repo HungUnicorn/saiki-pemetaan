@@ -12,13 +12,22 @@ from flask_wtf import Form
 # import uwsgi_metrics
 from forms import MappingForm, TopicForm, ConfigForm, MultiCheckboxField, \
     TemplateForm, ConsumerGroupForm, ManganEventTypeForm
-from controller import get_mappings, write_mapping, delete_mapping, \
-    get_topics, create_topic_entry, get_config, update_config, \
-    validate_topic, delete_topic_entry, reassign_all_topics, get_brokers, \
-    get_saiki_templates, get_saiki_template_single, update_template, \
-    delete_template, get_settings, update_settings, get_mangan_settings, \
+from controllers.general import get_settings, update_settings
+
+from controllers.mapping import get_mappings, write_mapping, delete_mapping
+
+from controllers.topic import get_topics, create_topic_entry, validate_topic, \
+    delete_topic_entry, reassign_all_topics, get_config, update_config
+
+from controllers.broker import get_brokers
+
+from controllers.template import get_saiki_templates, \
+    get_saiki_template_single, update_template, delete_template
+
+from controllers.mangan import get_mangan_settings, \
     create_mangan_consumer_group, create_mangan_event_type, \
     delete_mangan_event_type, get_mangan_offsets, set_mangan_offset
+
 
 from security import check_and_render, only_check, get_auth
 
