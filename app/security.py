@@ -1,11 +1,11 @@
 import json
 import logging
-import os
 
+import os
 import requests
+from controllers.general import get_settings
 from flask import flash, session, render_template, redirect, url_for
 from flask_oauthlib.client import OAuth
-from controller import get_settings
 
 
 def get_auth_oauth_token():
