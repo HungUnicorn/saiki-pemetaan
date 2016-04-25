@@ -28,7 +28,7 @@ def get_jmx_metrics_for_topic(topic, brokers):
                 jmx.key_bytes_in_per_topic + topic,
                 'OneMinuteRate')), '.2f')
         if (return_dict["MessagesPerSecOneMinuteRate"] != '-1.00' and
-                    return_dict["BytesPerSecOneMinuteRate"] != '-1.00'):
+                return_dict["BytesPerSecOneMinuteRate"] != '-1.00'):
             break
     return return_dict
 
