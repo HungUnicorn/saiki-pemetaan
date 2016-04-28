@@ -1,13 +1,101 @@
-"""Controller File."""
-import json
-import logging
 import urllib
+from app.zookeeper import init_zk, get_namespace_saiki
+from app.topics.controllers import validate_topic
+from app.settings.controllers import get_settings
 
-from controllers.topic import validate_topic
+# Import flask dependencies
+from flask import Blueprint, flash, redirect, url_for, request
+from app.topic_mapping.forms import MappingForm
+
+from app.auth import check_and_render, only_check
+
+import logging
+
+import json
 from kazoo.client import NoNodeError
-from zookeeper import init_zk, get_namespace_saiki
 
 namespace_saiki = get_namespace_saiki()
+
+mod_topic_mapping = Blueprint('topic_mapping',
+                              __name__,
+                              url_prefix='/topic_mapping')
+
+
+@mod_topic_mapping.route('/', methods=('GET', 'POST'))
+def topic_mapping():
+    """Docstring."""
+    mappings = get_mappings()
+    # super ugly exception catching , needs to be rewritten
+    try:
+        if 'error' not in mappings[0]:
+            return check_and_render('topic_mapping/index.html',
+                                    display_settings=get_settings(),
+                                    mappings=mappings)
+        else:
+            logging.warning('There was an error in getting ' +
+                            'the topic mappings: ' +
+                            mappings[0]['error'])
+            flash('There was an error in getting the topic mappings: ' +
+                  mappings[0]['error'],
+                  'critical')
+            return check_and_render('topic_mapping/index.html',
+                                    display_settings=get_settings(),
+                                    mappings=[])
+    except IndexError:
+        return check_and_render('topic_mapping/index.html',
+                                display_settings=get_settings(),
+                                mappings=[])
+
+
+@mod_topic_mapping.route('/create', methods=('GET', 'POST'))
+def create_topic_mapping():
+    """Docstring."""
+    if only_check():
+        mform = MappingForm()
+        mform.validate_on_submit()  # to get error messages to the browser
+        if request.method == 'POST':
+            if mform.validate() is False:
+                flash('Please check that all the fields are valid.',
+                      'critical')
+                return check_and_render('topic_mapping/create.html',
+                                        display_settings=get_settings(),
+                                        form=mform)
+            else:
+                if validate_topic(mform.topic.data) is True:
+                    write_mapping(mform.content_type.data,
+                                  mform.topic.data,
+                                  mform.active.data)
+                    flash('Added Mapping: ' +
+                          mform.content_type.data +
+                          ' <> ' +
+                          mform.topic.data)
+                    return redirect(url_for('topic_mapping.topic_mapping'))
+                else:
+                    flash('This topic does not exist!',
+                          'critical')
+                    return check_and_render('topic_mapping/create.html',
+                                            display_settings=get_settings(),
+                                            form=mform)
+        elif request.method == 'GET':
+            return check_and_render('topic_mapping/create.html',
+                                    display_settings=get_settings(),
+                                    form=mform)
+    else:
+        return check_and_render('index.html', display_settings=get_settings())
+
+
+@mod_topic_mapping.route('/delete', methods=('GET', 'POST'))
+def delete_topic_mapping():
+    """Docstring."""
+    if only_check():
+        delete_mapping(request.args.get('ct'), request.args.get('topic'))
+        flash('Deleted Mapping: ' +
+              request.args.get('ct') +
+              ' <> ' +
+              request.args.get('topic'))
+        return redirect(url_for('topic_mapping'))
+    else:
+        check_and_render('index.html', display_settings=get_settings())
 
 
 def get_mappings():
