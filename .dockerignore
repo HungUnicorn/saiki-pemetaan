@@ -1,0 +1,7 @@
+.idea
+.git
+.gitignore
+.travis.yml
+README.md
+redeploy_local.sh
+pemetaan.yaml
