@@ -5,7 +5,7 @@
 {% block styles %}
 {{super()}}
     <link rel="stylesheet" href="{{ url_for('static', filename='zalando-bootstrap.css') }}">
-    <link rel="stylesheet" href="{{ url_for('.static', filename='pemetaan.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='pemetaan.css') }}">
     <link rel="shortcut icon" href="{{ url_for('static', filename='saiki.ico') }}">
     <link rel="icon" type="image/png" href="{{ url_for('static', filename='favicon-16-16.png') }}" sizes="16x16">
     <link rel="icon" type="image/png" href="{{ url_for('static', filename='favicon-192-192.png') }}" sizes="192x192">
@@ -27,12 +27,12 @@
                 <div class="collapse navbar-collapse navbar-left">
                     <ul class="nav navbar-nav">
                       {% if access_token %}
-                        {% if display_settings['show_brokers'] %}<li><a href="{{url_for('.brokers')}}">Brokers</a></li>{% endif %}
-                        {% if display_settings['show_topics'] %}<li><a href="{{url_for('.topics')}}">Topics</a></li>{% endif %}
-                        {% if display_settings['show_mappings'] %}<li><a href="{{url_for('.topic_mapping')}}">Topic Mapping</a></li>{% endif %}
-                        {% if display_settings['show_templates'] %}<li><a href="{{url_for('.saiki_templates')}}">Message Templates</a></li>{% endif %}
-                        {% if display_settings['show_mangan'] %}<li><a href="{{url_for('.mangan_index')}}">Mangan</a></li>{% endif %}
-                        <li><a href="{{url_for('.pemetaan_settings')}}">Settings</a></li>
+                        {% if display_settings['show_brokers'] %}<li><a href="{{url_for('brokers.brokers')}}">Brokers</a></li>{% endif %}
+                        {% if display_settings['show_topics'] %}<li><a href="{{url_for('topics.topics')}}">Topics</a></li>{% endif %}
+                        {% if display_settings['show_mappings'] %}<li><a href="{{url_for('topic_mapping.topic_mapping')}}">Topic Mapping</a></li>{% endif %}
+                        {% if display_settings['show_templates'] %}<li><a href="{{url_for('saiki_templates.saiki_templates')}}">Message Templates</a></li>{% endif %}
+                        {% if display_settings['show_mangan'] %}<li><a href="{{url_for('mangan.mangan_index')}}">Mangan</a></li>{% endif %}
+                        <li><a href="{{url_for('settings.pemetaan_settings')}}">Settings</a></li>
                       {% endif %}
                     </ul>
                 </div>
@@ -41,9 +41,9 @@
                       <ul class="nav navbar-nav">
                       {% if access_token %}
                       <li>user: {% print(access_token['uid']) %}</li>
-                      <li><a class="auth-action" href="{{url_for('.logout')}}" style="color: #f08532; display:inline;">Logout</a></li>
+                      <li><a class="auth-action" href="{{url_for('logout')}}" style="color: #f08532; display:inline;">Logout</a></li>
                       {% else %}
-                      <li><a class="auth-action" href="{{url_for('.login')}}" style="color: #f08532; display:inline;">Login</a></li>
+                      <li><a class="auth-action" href="{{url_for('login')}}" style="color: #f08532; display:inline;">Login</a></li>
                       {% endif %}
                     </ul>
                     </span>

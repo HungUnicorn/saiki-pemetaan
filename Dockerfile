@@ -1,4 +1,4 @@
-FROM registry.opensource.zalan.do/stups/python:3.5.0-2
+FROM registry.opensource.zalan.do/stups/python:3.5.0-12
 MAINTAINER team-saiki@zalando.de
 
 ENV ZOOKEEPER_NAMESPACE_SAIKI=/saiki
@@ -33,10 +33,12 @@ RUN mkdir /etc/nginx/ssl
 COPY ssl_certs/* /etc/nginx/ssl/
 
 RUN mkdir -p /opt/pemetaan/
-COPY app /opt/pemetaan
+COPY app/ /opt/pemetaan/app/
+COPY run.py /opt/pemetaan/
+COPY config.py /opt/pemetaan/
 
-RUN wget -O /opt/pemetaan/rebalance_partitions.py https://raw.githubusercontent.com/zalando/saiki-buku/e2799ab3b21aace117a1fd5b9b784535a2d2ba30/rebalance_partitions.py
-RUN wget -O /opt/pemetaan/static/jquery.validate-json.js https://raw.githubusercontent.com/dustinboston/validate-json/master/jquery.validate-json.js
+RUN wget -O /opt/pemetaan/app/rebalance_partitions.py https://raw.githubusercontent.com/zalando/saiki-buku/e2799ab3b21aace117a1fd5b9b784535a2d2ba30/rebalance_partitions.py
+RUN wget -O /opt/pemetaan/app/static/jquery.validate-json.js https://raw.githubusercontent.com/dustinboston/validate-json/master/jquery.validate-json.js
 
 COPY scm-source.json /scm-source.json
 
