@@ -30,7 +30,8 @@
         <table id="topic_table" class="table">
           <thead>
             <tr>
-              <th>Event-Type</th>
+              <th>Event-Type Pattern Name</th>
+              <th>Regex</th>
               <th>Offset</th>
               <th>Delete</th>
             </tr>
@@ -40,9 +41,10 @@
               {% if c_group_name == c_group_param %}
                 {% for et in c_group_values %}
                   <tr>
-                    <td>{{ et }}</td>
-                    <td><a href="{{url_for('.mangan_offsets')}}?et={{ et }}">View</a></td>
-                    <td><a href="{{url_for('.mangan_index')}}?c_group={{ c_group_param }}&delete_et={{ et }}"><span class="glyphicon glyphicon-remove red" aria-hidden="true"></a></td>
+                    <td>{{ et['name'] }}</td>
+                      <td><pre>{{ et['regex'] }}</pre></td>
+                    <td><a href="{{url_for('.mangan_offsets')}}?et={{ et['regex_clean'] }}">View</a></td>
+                    <td><a href="{{url_for('.mangan_index')}}?c_group={{ c_group_param }}&delete_et={{ et['name'] }}"><span class="glyphicon glyphicon-remove red" aria-hidden="true"></a></td>
                   </tr>
                 {% endfor %}
               {% endif %}
