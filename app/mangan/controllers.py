@@ -1,7 +1,8 @@
 from app.zookeeper import init_zk, get_namespace_mangan
-from kazoo.client import NoNodeError
+from kazoo.client import NoNodeError, NodeExistsError
 import redis
 import os
+import json
 from flask import Blueprint, flash, request, redirect, url_for
 from app.auth import check_and_render, only_check
 from app.mangan.forms import ConsumerGroupForm, ManganEventTypeForm
@@ -76,14 +77,22 @@ def create_mangan_event_type_page():
                                         display_settings=get_settings(),
                                         form=et_form)
             else:
-                create_mangan_event_type(et_form.cg.data, et_form.et.data)
-                flash('created Event Type ' +
-                      et_form.et.data +
-                      ' in Consumer Group ' +
-                      et_form.cg.data)
-                return redirect(url_for('mangan_index') +
-                                "?c_group=" +
-                                et_form.cg.data)
+                if create_mangan_event_type(et_form.cg.data,
+                                            et_form.et.data,
+                                            et_form.et_regex.data):
+                    flash('created Event Type ' +
+                          et_form.et.data +
+                          ' in Consumer Group ' +
+                          et_form.cg.data)
+                    return redirect(url_for('mangan.mangan_index') +
+                                    "?c_group=" +
+                                    et_form.cg.data)
+                else:
+                    flash('Please check that all the fields are valid!.',
+                          'critical')
+                    return check_and_render('mangan/create_et.html',
+                                            display_settings=get_settings(),
+                                            form=et_form)
         elif request.method == 'GET':
             cg = request.args.get('c_group')
             et_form = ManganEventTypeForm(cg=cg)
@@ -136,12 +145,21 @@ def get_mangan_settings():
     except NoNodeError:
         zk.create('/consumer_groups',
                   makepath=True)
-        c_groups = []
+        c_groups = {}
     for c_group in c_groups:
+        return_dict[c_group] = []
         try:
-            return_dict[c_group] = zk.get_children('/consumer_groups/' +
+            for et_pattern_name in zk.get_children('/consumer_groups/' +
                                                    c_group +
-                                                   '/event_types')
+                                                   '/event_types'):
+                data, stat = zk.get('/consumer_groups/' +
+                                    c_group +
+                                    '/event_types/' + et_pattern_name)
+                et_pattern_data = json.loads(data.decode("utf-8"))
+                et_pattern_data['name'] = et_pattern_name
+                et_pattern_data['regex_clean'] = et_pattern_data['regex'].\
+                    replace('\.', '.').replace('^', '').replace('.*', '')
+                return_dict[c_group].append(et_pattern_data)
         except NoNodeError:
             zk.create('/consumer_groups/' + c_group + '/event_types',
                       makepath=True)
@@ -157,11 +175,17 @@ def create_mangan_consumer_group(c_group_name):
               makepath=True)
 
 
-def create_mangan_event_type(cg, et):
+def create_mangan_event_type(cg, et, et_regex):
     """Create Mangan Event Type for a specific Consumer Group in Zookeeper."""
     zk = init_zk(namespace_mangan)
-    zk.create('/consumer_groups/' + cg + '/event_types/' + et,
-              makepath=True)
+    try:
+        zk.create('/consumer_groups/' + cg + '/event_types/' + et,
+                  json.dumps({'regex': et_regex}).encode('UTF-8'),
+                  makepath=True)
+        return True
+    except NodeExistsError:
+        flash("This name exists already!", "critical")
+        return False
 
 
 def delete_mangan_event_type(cg, et):

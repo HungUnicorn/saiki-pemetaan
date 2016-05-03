@@ -9,11 +9,14 @@
   {{util.flashed_messages(dismissible=True)}}
     <div class="container">
       <h1>Create New Event Type</h1>
-      <form method="POST" action="{{url_for('.create_mangan_event_type_page')}}?c_group={{ form.cg.data }}">
+      <form method="POST" action="{{url_for('mangan.create_mangan_event_type_page')}}?c_group={{ form.cg.data }}">
         {{ form.hidden_tag() }}
         <table>
           <tr>
             <td>{{ form.et.label }} </td><td>{{ form.et(size=70) }}</td>
+          </tr>
+          <tr>
+            <td>{{ form.et_regex.label }} </td><td>{{ form.et_regex(size=70) }}</td>
           </tr>
           <tr>
             <td></td><td><input type="submit" value="Go"></td>

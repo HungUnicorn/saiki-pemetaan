@@ -4,9 +4,12 @@ from wtforms.validators import DataRequired
 
 
 class ConsumerGroupForm(Form):
-    consumer_group = StringField('Consumer Group', validators=[DataRequired()])
+    consumer_group = StringField('Consumer Group',
+                                 validators=[DataRequired()])
 
 
 class ManganEventTypeForm(Form):
     et = StringField('Event Type', validators=[DataRequired()])
+    et_regex = StringField('Event Type Regex Pattern',
+                           validators=[DataRequired()])
     cg = HiddenField('Consumer Group', validators=[DataRequired()])
