@@ -4,7 +4,7 @@ import re
 
 
 def validate_regx(Form, field):
-    pattern = r'^\w+$'
+    pattern = r'^[a-zA-Z0-9\._\-]+$'
     match = re.match(pattern, field.data)
     if match is None:
         flash('"{}" is not valid. Please do not use whitespace, '
