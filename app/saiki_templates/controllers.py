@@ -35,7 +35,7 @@ def saiki_templates_delete():
         template = request.args.get('template')
         delete_template(template)
         flash('Deleted Template: ' + template)
-        return redirect(url_for('saiki_templates'))
+        return redirect(url_for('saiki_templates.saiki_templates'))
     else:
         check_and_render('index.html', display_settings=get_settings())
 
@@ -58,7 +58,7 @@ def saiki_templates_edit():
                 update_template(template_form)
                 flash('updated Config for Topic : ' +
                       template_form.template_name.data)
-                return redirect(url_for('saiki_templates'))
+                return redirect(url_for('saiki_templates.saiki_templates'))
         elif request.method == 'GET':
             template = request.args.get('template')
             if template != '' and template is not None:
