@@ -60,7 +60,7 @@ def validate_access_token():
         return False, None
 
 
-def check_team(user, team=os.getenv('TEAMCHECK_ID', ''), ):
+def check_team(user, team=os.getenv('TEAMCHECK_ID', '')):
     """
     Check if the logged in user is in the correct team, if supplied.
     in case one parameter is not supplied, the check will always return true.
