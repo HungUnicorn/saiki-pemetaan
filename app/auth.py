@@ -63,23 +63,22 @@ def validate_access_token():
 def check_team(user, team=os.getenv('TEAMCHECK_ID', '')):
     """
     Check if the logged in user is in the correct team, if supplied.
-
     in case one parameter is not supplied, the check will always return true.
     """
+    token = get_auth_oauth_token()
     if team != '' and os.getenv('TEAMCHECK_API', '') != '':
-        logging.debug("checking with teams api ...")
-        token = get_auth_oauth_token()
-        logging.debug(token)
-        url = os.getenv('TEAMCHECK_API', '') + team
-        headers = {'Authorization': 'Bearer ' + token[0]}
-        r = requests.get(url, headers=headers)
-        member_list = json.loads(r.text)['member']
-        if user in member_list:
-            logging.debug("valid ...")
-            return True
-        else:
-            logging.error("valid user but not in the correct team ...")
-            return False
+        for team_single in team.split(','):
+            logging.debug("checking with teams api for team " + team_single)
+            logging.debug(token)
+            url = os.getenv('TEAMCHECK_API', '') + team_single
+            headers = {'Authorization': 'Bearer ' + token[0]}
+            r = requests.get(url, headers=headers)
+            member_list = json.loads(r.text)['member']
+            if user in member_list:
+                logging.debug("valid ...")
+                return True
+        logging.error("valid user but not in the correct team ...")
+        return False
     else:
         return True
 
