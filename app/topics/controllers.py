@@ -69,7 +69,7 @@ def topics_config():
             cform.validate_on_submit()  # to get error messages to the browser
             update_config(cform)
             flash('updated Config for Topic : ' + cform.topic.data)
-            return redirect(url_for('topics'))
+            return redirect(url_for('topics.topics'))
         elif request.method == 'GET':
             topic_name = request.args.get('topic')
             config = get_config(topic_name)
