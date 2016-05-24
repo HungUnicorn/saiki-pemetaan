@@ -79,7 +79,9 @@ def create_mangan_event_type_page():
             else:
                 if create_mangan_event_type(et_form.cg.data,
                                             et_form.et.data,
-                                            et_form.et_regex.data):
+                                            et_form.et_regex.data,
+                                            et_form.batch_size.data,
+                                            et_form.nakadi_endpoint.data):
                     flash('created Event Type ' +
                           et_form.et.data +
                           ' in Consumer Group ' +
@@ -175,12 +177,15 @@ def create_mangan_consumer_group(c_group_name):
               makepath=True)
 
 
-def create_mangan_event_type(cg, et, et_regex):
+def create_mangan_event_type(cg, et, et_regex, batch_size, nakadi_endpoint):
     """Create Mangan Event Type for a specific Consumer Group in Zookeeper."""
     zk = init_zk(namespace_mangan)
     try:
         zk.create('/consumer_groups/' + cg + '/event_types/' + et,
-                  json.dumps({'regex': et_regex}).encode('UTF-8'),
+                  json.dumps({'regex': et_regex,
+                              'batch_size': int(batch_size),
+                              'nakadi_endpoint': nakadi_endpoint}).
+                      encode('UTF-8'),
                   makepath=True)
         return True
     except NodeExistsError:
