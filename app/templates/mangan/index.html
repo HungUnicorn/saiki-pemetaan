@@ -32,6 +32,8 @@
             <tr>
               <th>Event-Type Pattern Name</th>
               <th>Regex</th>
+              <th>Batch Size</th>
+              <th>Nakadi Endpoint</th>
               <th>Offset</th>
               <th>Delete</th>
             </tr>
@@ -43,6 +45,8 @@
                   <tr>
                     <td>{{ et['name'] }}</td>
                       <td><pre>{{ et['regex'] }}</pre></td>
+                    <td>{{ et['batch_size'] }}</td>
+                    <td>{{ et['nakadi_endpoint'] }}</td>
                     <td><a href="{{url_for('.mangan_offsets')}}?et={{ et['regex_clean'] }}">View</a></td>
                     <td><a href="{{url_for('.mangan_index')}}?c_group={{ c_group_param }}&delete_et={{ et['name'] }}"><span class="glyphicon glyphicon-remove red" aria-hidden="true"></a></td>
                   </tr>
