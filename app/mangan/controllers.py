@@ -185,7 +185,7 @@ def create_mangan_event_type(cg, et, et_regex, batch_size, nakadi_endpoint):
                   json.dumps({'regex': et_regex,
                               'batch_size': int(batch_size),
                               'nakadi_endpoint': nakadi_endpoint}).
-                      encode('UTF-8'),
+                  encode('UTF-8'),
                   makepath=True)
         return True
     except NodeExistsError:

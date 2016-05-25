@@ -14,6 +14,6 @@ class ManganEventTypeForm(Form):
                            validators=[DataRequired()])
     cg = HiddenField('Consumer Group', validators=[DataRequired()])
     nakadi_endpoint = StringField('Nakadi Endpoint',
-                           validators=[DataRequired()])
+                                  validators=[DataRequired()])
     batch_size = IntegerField('Batch Size of Chunks sent to Lawang',
                               validators=[DataRequired()])
